@@ -1,0 +1,102 @@
+**************************************************************************************
+注意：1、所有访问controller的URL路径需遵循如下定义。 
+	2、如需自定义或增加URL访问路径，必须同步更新此文件的信息。
+	3、权限备用             			
+
+
+
+**************************************************************************************
+======================================================================================
+房源管理(查看)		  						/rentalBasic/houseList.html
+	 根据房源ID查询房源详情(包括该房源下的房间信息)	/rentalBasic/getHouseDetailByHouseId.html
+	根据房源Id获取其下房间列表					/rentalBasic/getRoomsByHouseId.html 	
+	 添加房源/公寓	  /rentalBasic/addHouse.html
+	 编辑房源/公寓	  /rentalBasic/modifyHouse.html	
+	 删除房源	  	  /rentalBasic/deleteHouse.html
+	 新增房间(楼层)	  /rentalBasic/addRoom.html
+	 编辑房间(楼层)	  /rentalBasic/modifyRoom.html
+	 删除房间(楼层)	  /rentalBasic/deleteRoom.html
+
+托管合同(查看)	                 /rentalContract/getOwnerContract.html
+      获取合同和所在房源信息      /rentalContract/getOwnerContractById.html
+	  录入合同查询	            /rentalContract/toAddOwnerContract.html
+	  录入合同	                /rentalContract/addOwnerContract.html
+	  查询能否删除合同	        /rentalContract/canDeleteContract.html
+	  查询能否续租合同	        /rentalContract/canReletContract.html
+	  编辑合同	                /rentalContract/updateOwnerContract.html
+	  续租合同	                /rentalContract/reletContract.html
+	  退租管理	                /rentalContract/offRentInOwner.html
+	  删除合同	                /rentalContract/deleteOwnerContract.html
+	  查询未支付账单数量	        /rentalContract/getUnpaidBillCountByContractId.html
+
+
+ 业主账单(查看)
+	  编辑账单	  /rental/modifyOwnerBill.html   
+	  确认付款	  /rental/confirmPay.html
+	  新增账单	  /rental/addOwnerBill.html
+	  删除账单	  /rental/deleteOwnerBill.html
+
+ 租客合同(查看)		  /rental/renterContractList.html
+	  录入合同	  /rental/addRenterContract.html 
+	  编辑合同	  /rental/modifyRenterContract.html
+	  续租管理	  /rental/offRentInRenter.html
+	  退租管理	  /rental/offRentInRenter.html
+	  删除合同	  /rental/deleteRenterContract.html
+
+ 租客账单(查看)
+	  账单抄表	  /rental/billMeterReading.html
+	  发送账单       /rental/sendBill.html
+	  确认收租       /rental/confirmRenting.html
+	  添加账单	 /rental/addRenterBill.html
+	  编辑账单	 /rental/modifyRenterBill.html  
+	  删除账单	 /rental/deleteRenterBill.html
+
+ 派单(查看)		/work/orderList.html
+	新建		/work/addOrder.html
+	编辑		/work/modifyOrder.html
+	分配		/work/distribution.html
+	删除		/work/deleteOrder.html
+
+ 财务管理(查看)		/finance/..
+
+ 收支流水(查看)		/finance/list
+	导出报表
+
+ 流水明细(查看)		/finance/listAllCost
+	添加明细   删除明细   导出报表
+
+ 收入预算(查看)		/finance/budget/收入
+	导出报表
+
+ 支出预算(查看)		/finance/budget/收入
+	导出报表
+
+ 报表(查看)
+	 营业报告(查看)
+		 导出报表
+	 营业明细(查看)
+		 导出报表
+	 业主/租客/房源清单(查看)
+		 导出报表
+ 统计(查看)
+	 运营统计(查看)
+	 财务统计(查看)
+
+ 出房管理(查看)
+  	设置出房
+  	
+ 分期(查看)
+ 
+ 余额(查看)
+
+ 智能硬件(查看)
+ 	添加电表   
+ 	电费充值  
+ 	断电/通电   
+  	解绑电表   
+ 	电表配置
+ 	
+#add new urls by liuqi start# 
+	进入租务版块首页				/rentalBasic/rentalIndex.html	
+	获取分配到指定用户下的小区列表	/rentalBasic/communityList.html
+#add new urls by liuqi end# 	

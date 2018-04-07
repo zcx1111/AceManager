@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="AceManager"
+  id="myeclipse.1499825513849"
+  context-root="/AceManager"
+  j2ee-spec="1.7"
+  archive="AceManager.war">
+  <attributes>
+    <attribute name="webrootdir" value="src/main/webapp" />
+  </attributes>
+</project-module>
+

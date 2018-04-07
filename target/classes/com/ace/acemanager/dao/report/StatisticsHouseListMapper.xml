@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ace.acemanager.dao.report.StatisticsHouseListMapper" >
+  <resultMap id="BaseResultMap" type="com.ace.acemanager.pojo.StatisticsHouseList" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="entering_time" property="enteringTime" jdbcType="TIMESTAMP" />
+    <result column="owner_contract_status" property="ownerContractStatus" jdbcType="VARCHAR" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+    <result column="plate_name" property="plateName" jdbcType="VARCHAR" />
+    <result column="community_name" property="communityName" jdbcType="VARCHAR" />
+    <result column="house_number" property="houseNumber" jdbcType="VARCHAR" />
+    <result column="rentout_type" property="rentoutType" jdbcType="VARCHAR" />
+    <result column="room_count" property="roomCount" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, entering_time, owner_contract_status, city_name, area_name, plate_name, community_name, 
+    house_number, rentout_type, room_count, create_time, modified_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from statistics_house_list
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from statistics_house_list
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ace.acemanager.pojo.StatisticsHouseList" >
+    insert into statistics_house_list (id, entering_time, owner_contract_status, 
+      city_name, area_name, plate_name, 
+      community_name, house_number, rentout_type, 
+      room_count, create_time, modified_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{enteringTime,jdbcType=TIMESTAMP}, #{ownerContractStatus,jdbcType=VARCHAR}, 
+      #{cityName,jdbcType=VARCHAR}, #{areaName,jdbcType=VARCHAR}, #{plateName,jdbcType=VARCHAR}, 
+      #{communityName,jdbcType=VARCHAR}, #{houseNumber,jdbcType=VARCHAR}, #{rentoutType,jdbcType=VARCHAR}, 
+      #{roomCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{modifiedTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ace.acemanager.pojo.StatisticsHouseList" >
+    insert into statistics_house_list
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="enteringTime != null" >
+        entering_time,
+      </if>
+      <if test="ownerContractStatus != null" >
+        owner_contract_status,
+      </if>
+      <if test="cityName != null" >
+        city_name,
+      </if>
+      <if test="areaName != null" >
+        area_name,
+      </if>
+      <if test="plateName != null" >
+        plate_name,
+      </if>
+      <if test="communityName != null" >
+        community_name,
+      </if>
+      <if test="houseNumber != null" >
+        house_number,
+      </if>
+      <if test="rentoutType != null" >
+        rentout_type,
+      </if>
+      <if test="roomCount != null" >
+        room_count,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifiedTime != null" >
+        modified_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="enteringTime != null" >
+        #{enteringTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ownerContractStatus != null" >
+        #{ownerContractStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null" >
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null" >
+        #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="plateName != null" >
+        #{plateName,jdbcType=VARCHAR},
+      </if>
+      <if test="communityName != null" >
+        #{communityName,jdbcType=VARCHAR},
+      </if>
+      <if test="houseNumber != null" >
+        #{houseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="rentoutType != null" >
+        #{rentoutType,jdbcType=VARCHAR},
+      </if>
+      <if test="roomCount != null" >
+        #{roomCount,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedTime != null" >
+        #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ace.acemanager.pojo.StatisticsHouseList" >
+    update statistics_house_list
+    <set >
+      <if test="enteringTime != null" >
+        entering_time = #{enteringTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ownerContractStatus != null" >
+        owner_contract_status = #{ownerContractStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null" >
+        city_name = #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null" >
+        area_name = #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="plateName != null" >
+        plate_name = #{plateName,jdbcType=VARCHAR},
+      </if>
+      <if test="communityName != null" >
+        community_name = #{communityName,jdbcType=VARCHAR},
+      </if>
+      <if test="houseNumber != null" >
+        house_number = #{houseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="rentoutType != null" >
+        rentout_type = #{rentoutType,jdbcType=VARCHAR},
+      </if>
+      <if test="roomCount != null" >
+        room_count = #{roomCount,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedTime != null" >
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ace.acemanager.pojo.StatisticsHouseList" >
+    update statistics_house_list
+    set entering_time = #{enteringTime,jdbcType=TIMESTAMP},
+      owner_contract_status = #{ownerContractStatus,jdbcType=VARCHAR},
+      city_name = #{cityName,jdbcType=VARCHAR},
+      area_name = #{areaName,jdbcType=VARCHAR},
+      plate_name = #{plateName,jdbcType=VARCHAR},
+      community_name = #{communityName,jdbcType=VARCHAR},
+      house_number = #{houseNumber,jdbcType=VARCHAR},
+      rentout_type = #{rentoutType,jdbcType=VARCHAR},
+      room_count = #{roomCount,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

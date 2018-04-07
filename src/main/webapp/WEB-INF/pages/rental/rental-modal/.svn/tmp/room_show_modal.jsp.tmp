@@ -1,0 +1,265 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: Administrator
+  Date: 2017/7/10
+  Time: 11:21
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<div class="modal fade bs-example-modal-lg" id="roomShowModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">
+					<span name="communityName"></span>
+					<small name="houseAddress"></small>
+				</h4>
+			</div>
+			<div class="modal-body">
+				<!--TODO 做成hidden-->
+				房间号:<input readonly="readonly" name="room-id"> 
+				房源号:<input readonly="readonly" name="house-id">
+				<ul class="nav nav-pills nav-tabs" id="roomTab">
+					<li class="active"><a href="#room-info-div" name="room_detail">房间详情</a></li>
+					<li><a href="#renter-contract-div" class="need-attr-room-id need-attr-house-id"   name="rent_contract">租房合同</a></li>
+					<li><a href="#renter-bill-div">租客账单</a></li>
+				</ul>
+				<div id="roomTabContent" class="tab-content">
+					<!-- 房间信息start -->
+					<div class="tab-pane active" id="room-info-div">
+						<div class="row">
+							<div class="col-md-6">
+							</div>
+							<div class="text-right col-md-6">
+								<br>
+								<button class="btn btn-info">编辑</button>
+								<button class="btn btn-danger" data-toggle="modal" data-target="#delRoomModal">删除</button>
+							</div>
+						</div>
+					<form action="#" method="post" id="modifyRoomForm">
+						<table>
+							<tr>
+								<td><h4 class="text-info"><strong>房间信息</strong></h4></td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>房间名称：</td>
+								<td><input type="text" class="form-control" readonly="readonly" name="roomName" value=""></td>
+							</tr>
+							<tr class="rentStation">
+								<td><h4 class="text-info"><strong>出租情况</strong></h4></td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr class="rentStation">
+								<td>租客：</td>
+								<td><span name="clienteleName"></span></td>
+							</tr>
+							<tr class="rentStation">
+								<td>实际入住周期：</td>
+								<td>
+									<span name="startDate"></span>&nbsp;~&nbsp;<span name="endDate"></span>
+								</td>
+							</tr>
+							<tr class="rentStation">
+								<td>租房状态：</td>
+								<td>
+									<span name="rommStatus"></span>
+								</td>
+							</tr>
+							<tr>
+								<td><h4 class="text-info"><strong>房间备注</strong></h4></td>
+								<td>&nbsp;</td>
+							</tr>							
+							<tr>
+								<td>房间备注：</td>
+								<td>
+									<textarea class="form-control" name="remark" readonly="readonly" cols="50" rows="3"></textarea>
+								</td>
+							</tr>
+						</table>
+					</form>
+					</div>
+					<!-- 房间信息end -->
+					<!-- 租房合同start -->
+					<div class="tab-pane" id="renter-contract-div">
+						<h2>
+							<small>生效合同</small>
+							<div style="float: right">
+								<button class="btn btn-link " data-toggle="modal" data-target="#reletRoomModal">续租</button>
+								<button class="btn btn-link " data-toggle="modal" data-target="#abandonRoomModal">退租</button>
+								<button class="btn btn-link " data-toggle="modal" data-target="#editRoomContractModal">编辑</button>
+								<button class="btn btn-link ">打印</button>
+							</div>
+						</h2>
+						&nbsp;&nbsp;
+						<h4 class="text-info ">刘备 （合同周期：2017-06-28到2018-06-27）</h4>
+						<strong>基本信息：</strong>
+						<table>
+							<tr>
+								<td>业主姓名</td>
+								<td>刘备</td>
+							</tr>
+							<tr>
+								<td>手机号码</td>
+								<td>15236965632</td>
+							</tr>
+							<tr>
+								<td>身份证号</td>
+								<td>511602198602120236</td>
+							</tr>
+							<tr>
+								<td>证件附件</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>合同附件</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>合同备注</td>
+								<td>***</td>
+							</tr>
+						</table>
+						<strong>租赁信息：</strong>
+						<table>
+							<tr>
+								<td>分段1</td>
+								<td>租赁时间：2017-06-28 到 2018-06-27</td>
+								<td>租金：<span class="text-info">800</span>元/月</td>
+							</tr>
+							<tr>
+								<td>分段2</td>
+								<td>租赁时间：2016.11.01-2019.09.30</td>
+								<td>租金：<span class="text-info">700</span>元/月</td>
+							</tr>
+							<tr>
+								<td>押金</td>
+								<td>1880元</td>
+							</tr>
+							<tr>
+								<td>支付方式</td>
+								<td>1月/付</td>
+							</tr>
+							<tr>
+								<td>固定交租日</td>
+								<td>当月3号</td>
+							</tr>
+						</table>
+						<strong>杂费信息：</strong>
+						<table>
+							<tr>
+								<td>水费</td>
+								<td>固定每月收费</td>
+								<td>费用金额：33 元/月</td>
+							</tr>
+							<tr>
+								<td>电费</td>
+								<td>固定每月收费</td>
+								<td>费用金额：22 元/月</td>
+							</tr>
+							<tr>
+								<td>燃气费</td>
+								<td>固定每月收费</td>
+								<td>费用金额：11 元/月</td>
+							</tr>
+						</table>
+						<hr>
+						<h3>
+							<small>历史合同</small>
+						</h3>
+						<h4 class="text-info ">
+							<button type="button" class="btn btn-link">
+								<i class="glyphicon glyphicon-info-sign"></i>
+							</button>
+							刘备 (合同周期：2015-10-17到2019-10-16)
+						</h4>
+					</div>
+					<!-- 租房合同end -->
+					<!-- 租客账单start -->
+					<div class="tab-pane" id="renter-bill-div">
+						<div class="text-right">
+							<button type="button" class="btn btn-link">添加账单</button>
+						</div>
+						<strong>待处理账单:</strong>
+						<table class="table table-bordered table-hover">
+							<tr>
+								<th>账单周期</th>
+								<th>账单状态</th>
+								<th>账单金额</th>
+								<th>应收款日期</th>
+								<th>操作</th>
+							</tr>
+							<tr>
+								<td>2017.07.01 - 2017.07.31</td>
+								<td>待支付</td>
+								<td>20 元</td>
+								<td>2017.06.30</td>
+								<td>
+									<button class="btn btn-default" data-toggle="modal" data-target="#showBillModal" data-bill-id="57430">查看</button>
+									<button class="btn btn-default" data-toggle="modal" data-bill-id="57430" data-target="#delBillModal">删除</button>
+									<button class="btn btn-default" data-target="#payForBillModal" data-toggle="modal" data-bill-id="57430">确认交租</button>
+								</td>
+							</tr>
+						</table>
+						<strong>未来账单:</strong>
+						<table class="table table-bordered table-hover">
+							<tr>
+								<th>账单周期</th>
+								<th>账单金额</th>
+								<th>应收款日期</th>
+								<th>操作</th>
+							</tr>
+							<tr>
+								<td>2017.08.01 -2017.08.31</td>
+								<td>20 元</td>
+								<td>2017.07.31</td>
+								<td>
+									<button class="btn btn-default" data-toggle="modal" data-target="#showBillModal" data-bill-id="51001">查看</button>
+									<button class="btn btn-default" data-toggle="modal" data-bill-id="51001" data-target="#delBillModal">删除</button>
+								</td>
+							</tr>
+							<tr>
+								<td>2017.09.01 -2017.09.30</td>
+								<td>20 元</td>
+								<td>2017.08.31</td>
+								<td>
+									<button class="btn btn-default" data-toggle="modal" data-target="#showBillModal" data-bill-id="22333">查看</button>
+									<button class="btn btn-default" data-toggle="modal" data-bill-id="22333" data-target="#delBillModal">删除</button>
+								</td>
+							</tr>
+							<tr>
+								<td>2018.03.01 -2018.03.31</td>
+								<td>20 元</td>
+								<td>2019.08.31</td>
+								<td>
+									<button class="btn btn-default" data-toggle="modal" data-target="#showBillModal" data-bill-id="23111">查看</button>
+									<button class="btn btn-default" data-toggle="modal" data-bill-id="23111" data-target="#delBillModal">删除</button>
+								</td>
+							</tr>
+						</table>
+						<strong>已处理账单</strong>
+						<table class="table table-bordered table-hover">
+							<tr>
+								<th>账单周期</th>
+								<th>账单金额</th>
+								<th>实收租日期</th>
+								<th>操作</th>
+							</tr>
+							<tr>
+								<td>2017.06.12 - 2017.06.24</td>
+								<td>800 元</td>
+								<td>2017.07.02</td>
+								<td>
+									<button class="btn btn-default" data-toggle="modal" data-target="#showBillModal" data-bill-id="10001">查看</button>
+									<button class="btn btn-default" data-toggle="modal" data-bill-id="10001" data-target="#delBillModal">删除</button>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<!-- 租客账单end -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

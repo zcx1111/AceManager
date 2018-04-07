@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ace.acemanager.dao.report.StatisticsMonthReportMapper" >
+  <resultMap id="BaseResultMap" type="com.ace.acemanager.pojo.StatisticsMonthReport" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="year" property="year" jdbcType="INTEGER" />
+    <result column="month" property="month" jdbcType="INTEGER" />
+    <result column="newlyadd_rooms" property="newlyaddRooms" jdbcType="INTEGER" />
+    <result column="del_rooms" property="delRooms" jdbcType="INTEGER" />
+    <result column="onrent_rooms" property="onrentRooms" jdbcType="INTEGER" />
+    <result column="empty_rooms" property="emptyRooms" jdbcType="INTEGER" />
+    <result column="empty_total_days" property="emptyTotalDays" jdbcType="INTEGER" />
+    <result column="wholemonth_empty_rooms" property="wholemonthEmptyRooms" jdbcType="INTEGER" />
+    <result column="newlyrent_rooms" property="newlyrentRooms" jdbcType="INTEGER" />
+    <result column="rerent_rooms" property="rerentRooms" jdbcType="INTEGER" />
+    <result column="newlyadd_customers" property="newlyaddCustomers" jdbcType="INTEGER" />
+    <result column="following_customers" property="followingCustomers" jdbcType="INTEGER" />
+    <result column="signed_customers" property="signedCustomers" jdbcType="INTEGER" />
+    <result column="total_bills" property="totalBills" jdbcType="INTEGER" />
+    <result column="y_receipt_bills" property="yReceiptBills" jdbcType="INTEGER" />
+    <result column="y_payment_bills" property="yPaymentBills" jdbcType="INTEGER" />
+    <result column="d_receipt_bills" property="dReceiptBills" jdbcType="INTEGER" />
+    <result column="d_payment_bills" property="dPaymentBills" jdbcType="INTEGER" />
+    <result column="ysys" property="ysys" jdbcType="REAL" />
+    <result column="ysws" property="ysws" jdbcType="REAL" />
+    <result column="rent_income" property="rentIncome" jdbcType="REAL" />
+    <result column="cash_income" property="cashIncome" jdbcType="REAL" />
+    <result column="extras_income" property="extrasIncome" jdbcType="REAL" />
+    <result column="rent_expense" property="rentExpense" jdbcType="REAL" />
+    <result column="cash_expense" property="cashExpense" jdbcType="REAL" />
+    <result column="extras_expense" property="extrasExpense" jdbcType="REAL" />
+    <result column="predict_rent_income" property="predictRentIncome" jdbcType="REAL" />
+    <result column="predict_rent_expense" property="predictRentExpense" jdbcType="REAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, year, month, newlyadd_rooms, del_rooms, onrent_rooms, empty_rooms, empty_total_days, 
+    wholemonth_empty_rooms, newlyrent_rooms, rerent_rooms, newlyadd_customers, following_customers, 
+    signed_customers, total_bills, y_receipt_bills, y_payment_bills, d_receipt_bills, 
+    d_payment_bills, ysys, ysws, rent_income, cash_income, extras_income, rent_expense, 
+    cash_expense, extras_expense, predict_rent_income, predict_rent_expense, create_time, 
+    modified_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from statistics_month_report
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from statistics_month_report
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ace.acemanager.pojo.StatisticsMonthReport" >
+    insert into statistics_month_report (id, year, month, 
+      newlyadd_rooms, del_rooms, onrent_rooms, 
+      empty_rooms, empty_total_days, wholemonth_empty_rooms, 
+      newlyrent_rooms, rerent_rooms, newlyadd_customers, 
+      following_customers, signed_customers, total_bills, 
+      y_receipt_bills, y_payment_bills, d_receipt_bills, 
+      d_payment_bills, ysys, ysws, 
+      rent_income, cash_income, extras_income, 
+      rent_expense, cash_expense, extras_expense, 
+      predict_rent_income, predict_rent_expense, create_time, 
+      modified_time)
+    values (#{id,jdbcType=INTEGER}, #{year,jdbcType=INTEGER}, #{month,jdbcType=INTEGER}, 
+      #{newlyaddRooms,jdbcType=INTEGER}, #{delRooms,jdbcType=INTEGER}, #{onrentRooms,jdbcType=INTEGER}, 
+      #{emptyRooms,jdbcType=INTEGER}, #{emptyTotalDays,jdbcType=INTEGER}, #{wholemonthEmptyRooms,jdbcType=INTEGER}, 
+      #{newlyrentRooms,jdbcType=INTEGER}, #{rerentRooms,jdbcType=INTEGER}, #{newlyaddCustomers,jdbcType=INTEGER}, 
+      #{followingCustomers,jdbcType=INTEGER}, #{signedCustomers,jdbcType=INTEGER}, #{totalBills,jdbcType=INTEGER}, 
+      #{yReceiptBills,jdbcType=INTEGER}, #{yPaymentBills,jdbcType=INTEGER}, #{dReceiptBills,jdbcType=INTEGER}, 
+      #{dPaymentBills,jdbcType=INTEGER}, #{ysys,jdbcType=REAL}, #{ysws,jdbcType=REAL}, 
+      #{rentIncome,jdbcType=REAL}, #{cashIncome,jdbcType=REAL}, #{extrasIncome,jdbcType=REAL}, 
+      #{rentExpense,jdbcType=REAL}, #{cashExpense,jdbcType=REAL}, #{extrasExpense,jdbcType=REAL}, 
+      #{predictRentIncome,jdbcType=REAL}, #{predictRentExpense,jdbcType=REAL}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifiedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ace.acemanager.pojo.StatisticsMonthReport" >
+    insert into statistics_month_report
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="year != null" >
+        year,
+      </if>
+      <if test="month != null" >
+        month,
+      </if>
+      <if test="newlyaddRooms != null" >
+        newlyadd_rooms,
+      </if>
+      <if test="delRooms != null" >
+        del_rooms,
+      </if>
+      <if test="onrentRooms != null" >
+        onrent_rooms,
+      </if>
+      <if test="emptyRooms != null" >
+        empty_rooms,
+      </if>
+      <if test="emptyTotalDays != null" >
+        empty_total_days,
+      </if>
+      <if test="wholemonthEmptyRooms != null" >
+        wholemonth_empty_rooms,
+      </if>
+      <if test="newlyrentRooms != null" >
+        newlyrent_rooms,
+      </if>
+      <if test="rerentRooms != null" >
+        rerent_rooms,
+      </if>
+      <if test="newlyaddCustomers != null" >
+        newlyadd_customers,
+      </if>
+      <if test="followingCustomers != null" >
+        following_customers,
+      </if>
+      <if test="signedCustomers != null" >
+        signed_customers,
+      </if>
+      <if test="totalBills != null" >
+        total_bills,
+      </if>
+      <if test="yReceiptBills != null" >
+        y_receipt_bills,
+      </if>
+      <if test="yPaymentBills != null" >
+        y_payment_bills,
+      </if>
+      <if test="dReceiptBills != null" >
+        d_receipt_bills,
+      </if>
+      <if test="dPaymentBills != null" >
+        d_payment_bills,
+      </if>
+      <if test="ysys != null" >
+        ysys,
+      </if>
+      <if test="ysws != null" >
+        ysws,
+      </if>
+      <if test="rentIncome != null" >
+        rent_income,
+      </if>
+      <if test="cashIncome != null" >
+        cash_income,
+      </if>
+      <if test="extrasIncome != null" >
+        extras_income,
+      </if>
+      <if test="rentExpense != null" >
+        rent_expense,
+      </if>
+      <if test="cashExpense != null" >
+        cash_expense,
+      </if>
+      <if test="extrasExpense != null" >
+        extras_expense,
+      </if>
+      <if test="predictRentIncome != null" >
+        predict_rent_income,
+      </if>
+      <if test="predictRentExpense != null" >
+        predict_rent_expense,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifiedTime != null" >
+        modified_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="year != null" >
+        #{year,jdbcType=INTEGER},
+      </if>
+      <if test="month != null" >
+        #{month,jdbcType=INTEGER},
+      </if>
+      <if test="newlyaddRooms != null" >
+        #{newlyaddRooms,jdbcType=INTEGER},
+      </if>
+      <if test="delRooms != null" >
+        #{delRooms,jdbcType=INTEGER},
+      </if>
+      <if test="onrentRooms != null" >
+        #{onrentRooms,jdbcType=INTEGER},
+      </if>
+      <if test="emptyRooms != null" >
+        #{emptyRooms,jdbcType=INTEGER},
+      </if>
+      <if test="emptyTotalDays != null" >
+        #{emptyTotalDays,jdbcType=INTEGER},
+      </if>
+      <if test="wholemonthEmptyRooms != null" >
+        #{wholemonthEmptyRooms,jdbcType=INTEGER},
+      </if>
+      <if test="newlyrentRooms != null" >
+        #{newlyrentRooms,jdbcType=INTEGER},
+      </if>
+      <if test="rerentRooms != null" >
+        #{rerentRooms,jdbcType=INTEGER},
+      </if>
+      <if test="newlyaddCustomers != null" >
+        #{newlyaddCustomers,jdbcType=INTEGER},
+      </if>
+      <if test="followingCustomers != null" >
+        #{followingCustomers,jdbcType=INTEGER},
+      </if>
+      <if test="signedCustomers != null" >
+        #{signedCustomers,jdbcType=INTEGER},
+      </if>
+      <if test="totalBills != null" >
+        #{totalBills,jdbcType=INTEGER},
+      </if>
+      <if test="yReceiptBills != null" >
+        #{yReceiptBills,jdbcType=INTEGER},
+      </if>
+      <if test="yPaymentBills != null" >
+        #{yPaymentBills,jdbcType=INTEGER},
+      </if>
+      <if test="dReceiptBills != null" >
+        #{dReceiptBills,jdbcType=INTEGER},
+      </if>
+      <if test="dPaymentBills != null" >
+        #{dPaymentBills,jdbcType=INTEGER},
+      </if>
+      <if test="ysys != null" >
+        #{ysys,jdbcType=REAL},
+      </if>
+      <if test="ysws != null" >
+        #{ysws,jdbcType=REAL},
+      </if>
+      <if test="rentIncome != null" >
+        #{rentIncome,jdbcType=REAL},
+      </if>
+      <if test="cashIncome != null" >
+        #{cashIncome,jdbcType=REAL},
+      </if>
+      <if test="extrasIncome != null" >
+        #{extrasIncome,jdbcType=REAL},
+      </if>
+      <if test="rentExpense != null" >
+        #{rentExpense,jdbcType=REAL},
+      </if>
+      <if test="cashExpense != null" >
+        #{cashExpense,jdbcType=REAL},
+      </if>
+      <if test="extrasExpense != null" >
+        #{extrasExpense,jdbcType=REAL},
+      </if>
+      <if test="predictRentIncome != null" >
+        #{predictRentIncome,jdbcType=REAL},
+      </if>
+      <if test="predictRentExpense != null" >
+        #{predictRentExpense,jdbcType=REAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedTime != null" >
+        #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ace.acemanager.pojo.StatisticsMonthReport" >
+    update statistics_month_report
+    <set >
+      <if test="year != null" >
+        year = #{year,jdbcType=INTEGER},
+      </if>
+      <if test="month != null" >
+        month = #{month,jdbcType=INTEGER},
+      </if>
+      <if test="newlyaddRooms != null" >
+        newlyadd_rooms = #{newlyaddRooms,jdbcType=INTEGER},
+      </if>
+      <if test="delRooms != null" >
+        del_rooms = #{delRooms,jdbcType=INTEGER},
+      </if>
+      <if test="onrentRooms != null" >
+        onrent_rooms = #{onrentRooms,jdbcType=INTEGER},
+      </if>
+      <if test="emptyRooms != null" >
+        empty_rooms = #{emptyRooms,jdbcType=INTEGER},
+      </if>
+      <if test="emptyTotalDays != null" >
+        empty_total_days = #{emptyTotalDays,jdbcType=INTEGER},
+      </if>
+      <if test="wholemonthEmptyRooms != null" >
+        wholemonth_empty_rooms = #{wholemonthEmptyRooms,jdbcType=INTEGER},
+      </if>
+      <if test="newlyrentRooms != null" >
+        newlyrent_rooms = #{newlyrentRooms,jdbcType=INTEGER},
+      </if>
+      <if test="rerentRooms != null" >
+        rerent_rooms = #{rerentRooms,jdbcType=INTEGER},
+      </if>
+      <if test="newlyaddCustomers != null" >
+        newlyadd_customers = #{newlyaddCustomers,jdbcType=INTEGER},
+      </if>
+      <if test="followingCustomers != null" >
+        following_customers = #{followingCustomers,jdbcType=INTEGER},
+      </if>
+      <if test="signedCustomers != null" >
+        signed_customers = #{signedCustomers,jdbcType=INTEGER},
+      </if>
+      <if test="totalBills != null" >
+        total_bills = #{totalBills,jdbcType=INTEGER},
+      </if>
+      <if test="yReceiptBills != null" >
+        y_receipt_bills = #{yReceiptBills,jdbcType=INTEGER},
+      </if>
+      <if test="yPaymentBills != null" >
+        y_payment_bills = #{yPaymentBills,jdbcType=INTEGER},
+      </if>
+      <if test="dReceiptBills != null" >
+        d_receipt_bills = #{dReceiptBills,jdbcType=INTEGER},
+      </if>
+      <if test="dPaymentBills != null" >
+        d_payment_bills = #{dPaymentBills,jdbcType=INTEGER},
+      </if>
+      <if test="ysys != null" >
+        ysys = #{ysys,jdbcType=REAL},
+      </if>
+      <if test="ysws != null" >
+        ysws = #{ysws,jdbcType=REAL},
+      </if>
+      <if test="rentIncome != null" >
+        rent_income = #{rentIncome,jdbcType=REAL},
+      </if>
+      <if test="cashIncome != null" >
+        cash_income = #{cashIncome,jdbcType=REAL},
+      </if>
+      <if test="extrasIncome != null" >
+        extras_income = #{extrasIncome,jdbcType=REAL},
+      </if>
+      <if test="rentExpense != null" >
+        rent_expense = #{rentExpense,jdbcType=REAL},
+      </if>
+      <if test="cashExpense != null" >
+        cash_expense = #{cashExpense,jdbcType=REAL},
+      </if>
+      <if test="extrasExpense != null" >
+        extras_expense = #{extrasExpense,jdbcType=REAL},
+      </if>
+      <if test="predictRentIncome != null" >
+        predict_rent_income = #{predictRentIncome,jdbcType=REAL},
+      </if>
+      <if test="predictRentExpense != null" >
+        predict_rent_expense = #{predictRentExpense,jdbcType=REAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedTime != null" >
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ace.acemanager.pojo.StatisticsMonthReport" >
+    update statistics_month_report
+    set year = #{year,jdbcType=INTEGER},
+      month = #{month,jdbcType=INTEGER},
+      newlyadd_rooms = #{newlyaddRooms,jdbcType=INTEGER},
+      del_rooms = #{delRooms,jdbcType=INTEGER},
+      onrent_rooms = #{onrentRooms,jdbcType=INTEGER},
+      empty_rooms = #{emptyRooms,jdbcType=INTEGER},
+      empty_total_days = #{emptyTotalDays,jdbcType=INTEGER},
+      wholemonth_empty_rooms = #{wholemonthEmptyRooms,jdbcType=INTEGER},
+      newlyrent_rooms = #{newlyrentRooms,jdbcType=INTEGER},
+      rerent_rooms = #{rerentRooms,jdbcType=INTEGER},
+      newlyadd_customers = #{newlyaddCustomers,jdbcType=INTEGER},
+      following_customers = #{followingCustomers,jdbcType=INTEGER},
+      signed_customers = #{signedCustomers,jdbcType=INTEGER},
+      total_bills = #{totalBills,jdbcType=INTEGER},
+      y_receipt_bills = #{yReceiptBills,jdbcType=INTEGER},
+      y_payment_bills = #{yPaymentBills,jdbcType=INTEGER},
+      d_receipt_bills = #{dReceiptBills,jdbcType=INTEGER},
+      d_payment_bills = #{dPaymentBills,jdbcType=INTEGER},
+      ysys = #{ysys,jdbcType=REAL},
+      ysws = #{ysws,jdbcType=REAL},
+      rent_income = #{rentIncome,jdbcType=REAL},
+      cash_income = #{cashIncome,jdbcType=REAL},
+      extras_income = #{extrasIncome,jdbcType=REAL},
+      rent_expense = #{rentExpense,jdbcType=REAL},
+      cash_expense = #{cashExpense,jdbcType=REAL},
+      extras_expense = #{extrasExpense,jdbcType=REAL},
+      predict_rent_income = #{predictRentIncome,jdbcType=REAL},
+      predict_rent_expense = #{predictRentExpense,jdbcType=REAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

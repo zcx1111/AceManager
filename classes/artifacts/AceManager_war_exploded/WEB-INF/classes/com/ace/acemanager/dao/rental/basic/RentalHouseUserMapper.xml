@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ace.acemanager.dao.rental.basic.RentalHouseUserMapper">
+	<resultMap id="BaseResultMap" type="com.ace.acemanager.pojo.RentalHouseUser">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="house_id" property="houseId" jdbcType="INTEGER" />
+		<result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		id, user_id, house_id, modified_time, create_time
+	</sql>
+	
+	<!-- 根据主键查询房源用户关系 -->
+	<select id="selectHURById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rental_house__user
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 根据主键删除房源用户关系 -->
+	<delete id="deleteHURById" parameterType="java.lang.Integer">
+		delete from rental_house__user
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<!-- 增加房源用户关系 -->
+	<insert id="addHUR" parameterType="com.ace.acemanager.pojo.RentalHouseUser">
+		insert into rental_house__user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="houseId != null">
+				house_id,
+			</if>
+			<if test="modifiedTime != null">
+				modified_time,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="houseId != null">
+				#{houseId,jdbcType=INTEGER},
+			</if>
+			<if test="modifiedTime != null">
+				#{modifiedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	
+	<!-- 根据主键更新房源用户关系 -->
+	<update id="updateHURById" parameterType="com.ace.acemanager.pojo.RentalHouseUser">
+		update rental_house__user
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="houseId != null">
+				house_id = #{houseId,jdbcType=INTEGER},
+			</if>
+			<if test="modifiedTime != null">
+				modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	
+	<!-- 根据房源id 用户id 统计记录数 -->
+	<select id="countByHIdAndUId" parameterType="RentalHouseUser" resultType="Integer">
+		SELECT count(1) FROM rental_house__user hu  
+		WHERE hu.user_id = #{userId} and hu.house_id =#{houseId} 
+	</select>
+	
+	<delete id="delRentalHouseByUserId" parameterType="Integer" >
+		delete from rental_house__user  where user_id = #{userId}
+	</delete>
+	
+	<insert id="insertsHU" parameterType="java.util.List">
+		insert into rental_house__user(user_id,house_id,modified_time,create_time)
+		values
+		<foreach collection="list" index="index" item="item"  separator="," >
+        (#{item.userId},
+        #{item.houseId},
+        #{item.modifiedTime},
+        #{item.createTime})
+        </foreach>
+	</insert>
+	
+	<delete id="delByUserAndHouseId" parameterType="RentalHouseUser" >
+		delete FROM rental_house__user  
+		WHERE user_id = #{userId} and house_id =#{houseId} 
+		</delete>
+</mapper>

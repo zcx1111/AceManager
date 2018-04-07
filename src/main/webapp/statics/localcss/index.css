@@ -1,0 +1,50 @@
+  .ch-container {
+            margin-top: 80px;
+        }
+
+        #menu {
+            text-align: center;
+            font-size: 16px;
+        }
+
+
+        #data-stats{
+            background-color: #edfbfb;
+            height: 90px;
+        }
+        #data{
+            border-left: dashed #b7c5df 1px;
+        }
+        #data table td {
+            text-align: center;
+            font-size: 12px;
+            color: #888c91;
+            width: 25%;
+        }
+        #data table td p {
+            font-size: 24px;
+            text-align: center;
+            color: #74b9ff;
+        }
+
+        #data-stats #stats {
+
+            text-align: center;
+
+        }
+
+        #data-stats #stats .top {
+            padding-top: 5px;
+            font-size: 18px;
+        }
+        #stats .tips {
+            font-size: 14px;
+        }
+
+       #date-tips {
+            text-align: center;
+            width: 190px;
+            height: 90px;
+            padding: 0;
+           font-size: 24px;
+        }

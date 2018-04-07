@@ -1,0 +1,318 @@
+/**
+ * Created by Administrator on 2017/6/29.
+ */
+
+$(document).ready(function () {
+    //菜单栏切换
+    $('[id $= "Tab" ] a').click(function (e) {
+        e.preventDefault();
+        var target = e.target;
+        switch ($(target).attr("name")){
+            case "custody_contract":
+                get_custody_contract(target);
+            case "rental_bill":
+            	get_rental_bill(target);
+            default:break; 
+        }
+        $(this).tab('show')
+    });
+
+    //退杂费
+    $('[class = abandonHouseExtras]').change(function () {
+        if ($(this).prop('checked')) {                      //被选中
+            var newTr = `<tr name="` + $(this).val() + `">
+                            <td>` + $(this).val() + `</td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <select class="form-control">
+                                            <option>应收</option>
+                                            <option>应退</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 input-group">
+                                        <input type="text" class="form-control">
+                                        <span class="input-group-addon">元</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>`;
+            $(this).parents('table').find('tr:last').after(newTr);
+        } else {                                             //被取消选中
+            $(this).parents('table').find('[name = ' + $(this).val() + ']').remove();
+        }
+    });
+
+    //添加杂费
+    $('[class = houseExtras]').change(function () {
+        if ($(this).prop('checked')) {                      //被选中
+            var newTr = `<tr name="` + $(this).val() + `">
+                            <td>` + $(this).val() + `</td>
+                            <td class="input-group">
+                                <input type="text" class="form-control">
+                                <span class="input-group-addon">元/月</span>
+                            </td>
+                        </tr>`;
+            $(this).parents('table').find('tr:last').after(newTr);
+        } else {                                             //被取消选中
+            $(this).parents('table').find('[name = ' + $(this).val() + ']').remove();
+        }
+    });
+
+
+    //删除房源模态框
+    $('#delHouseModal').on('show.bs.modal', function (event) {
+        addHouseId(this, event);
+    });
+
+    //停用房源模态框
+    $('#disableHouseModal').on('show.bs.modal', function (event) {
+        addHouseId(this, event);
+    });
+
+    //添加房间模态框
+    $('#addRoomConfirmModal').on('show.bs.modal', function (event) {
+        addHouseId(this, event);
+    });
+
+    //退租房源模态框
+    $('#abandonHouseModal').on('show.bs.modal', function () {
+        $(this).find('[name = endTime]').val(DateFormat.getNowDateString('yyyy-MM-dd'));      //点击时设置时间
+    });
+
+    //退租房间模态框
+    $('#abandonRoomModal').on('show.bs.modal', function () {
+        $(this).find('[name = endTime]').val(DateFormat.getNowDateString('yyyy-MM-dd'));      //点击时设置时间
+    });
+
+    //续租模态框
+    $('#reletHouseModal,#reletRoomModal,#signedRoomModal,#signedHouseModal').on('show.bs.modal', function () {         //初始化时间
+        var $chooseMonth = $(this).find('[name = chooseMonth]');
+        for (var i = 2; i <= 24; i++) {
+            $chooseMonth.append('<option value="' + i + '">' + i + '</option>')
+        }
+        var date = new Date();
+        $(this).find('[name = startDate]').val(DateFormat.getNowDateString("yyyy-MM-dd"));
+        date.setMonth(date.getMonth() + 1);
+        $(this).find('[name = endDate]').val(DateFormat.getDateString(date,"yyyy-MM-dd"));
+
+    });
+
+    //选择日期
+    $('#reletHouseModal,#reletRoomModal,#signedRoomModal,#signedHouseModal').find('[name = chooseMonth]').change(function () {
+        var $modalContent = $(this).parents('[class = modal-content]');
+        var startDate = $modalContent.find('[name = startDate]').val();
+        var date = DateFormat.parseDate(startDate, "yyyy-MM-dd");
+        date.setMonth(date.getMonth() + parseInt($(this).val()));
+        $modalContent.find('[name = endDate]').val(date.getFullYear() + '-' + (date.getMonth() + 1 ) + '-' + date.getDate());
+    });
+
+
+    //账单查看模态框
+    $('#showBillModal,#delBillModal,#editBillModal,#payForBillModal').on('show.bs.modal', function (event) {
+        addBillId(this, event);
+    });
+
+    //收租模态框触法事件
+    $('#payForBillModal').on('show.bs.modal', function (event) {
+        $(this).find('[name = realDate]').val(DateFormat.getNowDateString("yyyy-MM-dd HH:mm:ss"));         //点击时设置时间
+    });
+
+
+    //添加房源模态框 地址三级联动
+    $('#addHouseModal').on('show.bs.modal', function (event) {
+        $("#house_city_form").citySelect({
+            prov: "湖南",
+            city: "长沙"
+        });
+    });
+
+    $("#house_cites").citySelect({
+        prov: "湖南",
+        city: "长沙"
+    });
+
+    //houseModal 模态框
+    $('#houseModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var houseId = button.data('house-id');
+        $(this).find('[name = house-id]').html(houseId);
+        $(this).find('.need-attr-house-id').attr('data-house-id', houseId);
+    });
+
+    //roomShowModal 模态框
+    $('#roomShowModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var houseId = button.data('house-id');
+        var roomId = button.data('room-id');
+        $(this).find('[name = room-id]').val(roomId);
+        $(this).find('[name = house-id]').val(houseId);
+    });
+
+    //房源编辑
+    $('#house-edit').click(function () {
+    	if($(this).html() == "编辑"){//编辑框呈现
+    		$('#community-name').html('<input type="text" class="form-control" name="communityName" value="' + $('#community-name').html() + '"/>')
+    		$('#rent-type').html('<select class="form-control" name="rentType" >' +
+    				'<option value="整租" ' + ($('#rent-type').html() === "整租" ? "selected" : "") + '>整租</option>' +
+    				'<option value="合租" ' + ($('#rent-type').html() === "合租" ? "selected" : "") + '>合租</option>' +
+    		'</select>');
+    		$('#house-city').html(`<td>所在城市</td>
+    		<td><select class="prov form-control" name="houseProv"></select></td>
+    		<td><select class="city form-control" disabled="disabled" name="houseCity"></select></td>`);
+    		$("#house-area").html(`<td>所在区域</td><td><select class="dist form-control" disabled="disabled" name="houseDist"></select></td>`);
+    		$("#cityAssit").citySelect({
+    			prov: "湖南",
+    			city: "长沙"
+    		});
+    		$('#house-explain').html('<input type="text" name="houseExplain" class="form-control" value="' + $('#house-explain').html() + '"/>')
+    		$('#house-address').html('<input type="text" name="houseAddress" class="form-control" value="' + $('#house-address').html() + '"/>');
+    		//按钮转换
+    		$('#house-edit').html("保存");
+    		
+    	}else if($(this).html() == "保存"){
+    		$("#modifyHouseDetialFrom").submit();
+    	}
+    });
+
+<<<<<<< .mine
+=======
+
+    //为模态框添加house-id
+    function addHouseId(obj, event) {
+        var button = $(event.relatedTarget);
+        var houseId = button.attr('data-house-id');
+        $(obj).find('[name = house-id]').html(houseId);
+    }
+
+    //为模态框添加bill-id
+    function addBillId(obj, event) {
+        var button = $(event.relatedTarget);
+        var billId = button.attr('data-bill-id');
+        alert(billId);
+        $(obj).find('[name = bill-id]').html(billId);
+        $(obj).find('.need-attr-bill-id').attr('data-bill-id', billId);
+        
+        $.ajax({
+        	url:contextPath+"/finance/getBillById/"+billId,
+        	success:function(resultjson){
+        		var result = eval("("+resultjson+")");
+        		alert(result);
+        	},
+        	error:function(){
+        		alert("error");
+        	}
+        });
+    }
+
+
+    
+>>>>>>> .r12
+    //托管合同编辑修改表单提交
+    $("#modifyHouseContractBtn").click(function(){
+    	$("#modifyHouseContractFrom").submit();
+    });
+    
+    /*liuqi 加载小区列表    start*/
+    $.ajax({
+        type: "POST",
+        url: contextPath+"/rentalBasic/houseList.html",
+        dataType: "html",
+        success: function(data){
+            if(data == "noLogin"){
+            	alert("请先登录!");
+            }else if(data == "failed"){
+            	aleret("获取失败!");
+            }else{
+            	//清空UL里面下面除了第一个li的内容
+            	$("#communityListUl li:gt(0)").empty(); 
+            	var result = $.parseJSON(data);
+            	for ( var i = 0; i < result.length; i++) {
+            		$("#communityListUl").append(`<li><a class="ajax-link" href="#"><span>`+result[i].communityName+`</span></a></li>`);
+				}
+            }
+         }
+    });    
+    /*liuqi 加载小区列表    end*/
+    
+});
+
+function get_custody_contract(target) {
+    //TODO 获取托管合同信息 操作对应div
+    var $div = $($(target).attr("href"));
+}
+
+//为模态框添加house-id
+function addHouseId(obj, event) {
+    var button = $(event.relatedTarget);
+    var houseId = button.attr('data-house-id');
+    $(obj).find('[name = house-id]').html(houseId);
+}
+
+<<<<<<< .mine
+//为模态框添加bill-id
+function addBillId(obj, event) {
+    var button = $(event.relatedTarget);
+    var billId = button.attr('data-bill-id');
+    $(obj).find('[name = bill-id]').html(billId);
+    $(obj).find('.need-attr-bill-id').attr('data-bill-id', billId);
+=======
+}
+
+
+//账单列表
+function get_rental_bill(target) {
+	//TODO 获取托管合同信息 操作对应div
+    var $div = $($(target).attr("href"));
+    var houseId = $(target).attr("data-house-id");
+    alert(houseId);
+    $.ajax({
+    	url:contextPath+"/rentalBill/getByHouseId/"+houseId,
+    	success:function(resultjson){
+    		alert(resultjson);
+    		var result = eval("("+resultjson+")");
+    		for(var i=0;i<result.length;i++){
+    			alert(result[i].billStatus);
+    			if(result[i].billStatus == "待支付"){
+    				$("#billStartDate_pend").text(result[i].billStartDate);
+    	    		$("#billEndDate_pend").text(result[i].billEndDate);
+    	    		$("#billStatus_pend").text(result[i].billStatus);
+    	    		$("#totalMoney_pend").text(result[i].totalMoney);
+    	    		$("#receiptDate_pend").text(result[i].receiptDate);
+    			}
+    			if(result[i].billStatus == "待处理"){
+    				trStr = '<tr >';//拼接处规范的表格形式
+		       		trStr += '<td >' + result[i].billStartDate +"-"+result[i].billEndDate+ '</td>';//数据表的主键值
+		       		trStr += '<td >' + result[i].totalMoney + '</td>';//对应数组表的字段值
+		       		trStr += '<td >' + result[i].receiptDate + '</td>';
+		       		trStr += '<td > <button class="btn btn-default" data-toggle="modal" '+
+		       			'data-target="#showBillModal" data-bill-id="'+result[i].id+'">查看 </button> '+
+                        '<button class="btn btn-default" data-toggle="modal" data-target="#delBillModal" '+
+                               ' data-bill-id="'+result[i].id+'">删除'
+                        '</button></td>';
+		       		trStr += '</tr>';
+		       		$("#future").append(trStr);
+    			}
+    			if(result[i].billStatus == "已支付"){
+    				trStr = '<tr >';//拼接处规范的表格形式
+		       		trStr += '<td >' + result[i].billStartDate +"-"+result[i].billEndDate+ '</td>';//数据表的主键值
+		       		trStr += '<td >' + result[i].totalMoney + '</td>';//对应数组表的字段值
+		       		trStr += '<td >' + result[i].actualTransactionDate + '</td>';
+		       		trStr += '<td > <button class="btn btn-default" data-toggle="modal" '+
+		       			'data-target="#showBillModal" data-bill-id="'+result[i].id+'">查看 </button> '+
+                        '<button class="btn btn-default" data-toggle="modal" data-target="#delBillModal" '+
+                               ' data-bill-id="'+result[i].id+'">删除'
+                        '</button></td>';
+		       		trStr += '</tr>';
+		       		$("#manage").append(trStr);
+    			}
+    		}
+    		
+    		
+    	},
+    	error:function(){
+    		alert("error");
+    	}
+    });
+>>>>>>> .r12
+}

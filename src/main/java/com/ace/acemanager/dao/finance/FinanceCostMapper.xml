@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ace.acemanager.dao.finance.FinanceCostMapper" >
+  <resultMap id="BaseResultMap" type="com.ace.acemanager.pojo.FinanceCost" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cost_name" property="costName" jdbcType="VARCHAR" />
+    <result column="fee_amount" property="feeAmount" jdbcType="REAL" />
+    <result column="bill_id" property="billId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="DATE" />
+    <result column="update_date" property="updateDate" jdbcType="DATE" />
+    <!--多对一的关系, property: 指的是属性的值, javaType：指的是属性的类型 -->
+    <!-- <association property="bill" javaType="com.ace.acemanager.pojo.FinanceBill">
+    	<id column="bill_id" property="id" jdbcType="INTEGER" />
+	    <result column="transaction_object" property="transactionObject" jdbcType="VARCHAR" />
+	    <result column="transaction_object_name" property="transactionObjectName" jdbcType="VARCHAR" />
+	    <result column="bill_start_date" property="billStartDate" jdbcType="DATE" />
+	    <result column="bill_end_date" property="billEndDate" jdbcType="DATE" />
+	    <result column="receipt_date" property="receiptDate" jdbcType="DATE" />
+	    <result column="actual_transaction_date" property="actualTransactionDate" jdbcType="DATE" />
+	    <result column="room_name" property="roomName" jdbcType="VARCHAR" />
+	    <result column="fund_flow" property="fundFlow" jdbcType="VARCHAR" />
+	    <result column="bill_note" property="billNote" jdbcType="VARCHAR" />
+	    <result column="payment_method" property="paymentMethod" jdbcType="VARCHAR" />
+	    <result column="bill_status" property="billStatus" jdbcType="VARCHAR" />
+	    <result column="batch" property="batch" jdbcType="VARCHAR" />
+	    <result column="total_money" property="totalMoney" jdbcType="REAL" />
+	    <result column="house_name" property="houseName" jdbcType="VARCHAR" />
+	    <result column="rental_room_id" property="rentalRoomId" jdbcType="INTEGER" />
+	    <result column="rental_house_id" property="rentalHouseId" jdbcType="INTEGER" />
+    </association> -->
+    <association property="bill" javaType="com.ace.acemanager.pojo.FinanceBill"
+     resultMap="com.ace.acemanager.dao.finance.FinanceBillMapper.BaseResultMap"/>
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, cost_name, fee_amount, bill_id, create_date, update_date
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    SELECT
+  b.*,
+  c.*,
+  t1.building  AS h_building,
+  t1.floor     AS h_floor,
+  t1.no        AS h_no,
+  t1.unit      AS h_unit,
+  t1.community_name,
+  t1.room_name AS r_room_name
+FROM finance_cost c LEFT JOIN finance_bill b ON b.id = c.bill_id
+  INNER JOIN (SELECT
+                c.community_name,
+                r.id        rid,
+                r.room_name room_name,
+                h.*
+              FROM rental_room r INNER JOIN rental_house h ON h.id = r.house_id
+                INNER JOIN rental_community c ON c.id = h.community_id) t1
+    ON t1.rid = b.rental_room_id
+WHERE c.id = #{id}
+
+UNION
+
+SELECT
+  b.*,
+  c.*,
+  t2.building AS h_building,
+  t2.floor    AS h_floor,
+  t2.no       AS h_no,
+  t2.unit     AS h_unit,
+  t2.community_name,
+  NULL
+FROM finance_cost c LEFT JOIN finance_bill b ON b.id = c.bill_id
+  INNER JOIN
+  (SELECT
+     c.community_name,
+     h.id hid,
+     h.*
+   FROM rental_house h INNER JOIN rental_community c ON c.id = h.community_id) t2 ON t2.hid = b.rental_house_id
+WHERE c.id = #{id}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from finance_cost
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <select id="listCostByBillId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	select * from finance_cost where bill_id = #{billId}
+  </select>
+  
+  <!-- 条件查询Cost -->
+  <select id="listCheckCost" parameterType="com.ace.acemanager.pojo.FinanceCost" resultMap="BaseResultMap">
+  	SELECT
+  c.*,
+  b.*,
+  t1.building as h_building,
+  t1.floor as h_floor,
+  t1.no as h_no,
+  t1.unit as h_unit,
+  t1.community_name,
+  t1.room_name as r_room_name
+FROM finance_cost c LEFT JOIN finance_bill b ON c.bill_id = b.id
+  INNER JOIN  (SELECT
+                 c.community_name,
+                 r.id rid,r.room_name,
+                 h.*,
+                 u.id t1uid
+               FROM rental_room r LEFT JOIN rental_house h ON h.id = r.house_id
+                 LEFT JOIN rental_community c ON c.id = h.community_id
+                 LEFT JOIN auth_user u ON u.id = h.manager_user_id) t1
+    ON t1.rid = b.rental_room_id
+WHERE t1.t1uid=#{bill.userId} AND c.fee_amount != 0
+		<if test="bill.billStatus != null">
+  			and b.bill_status = #{bill.billStatus}
+  		</if>
+  		<if test="bill.billStartDate != null">
+  			and <![CDATA[ b.actual_transaction_date >= ]]> #{bill.billStartDate}
+  		</if>
+  		<if test="bill.billEndDate != null">
+  			and<![CDATA[ b.actual_transaction_date <= ]]>  #{bill.billEndDate}
+  		</if>
+  		<if test="bill.fundFlow != null">
+  			and b.fund_flow = #{bill.fundFlow}
+  		</if>
+  		<if test="bill.roomName != null">
+  			and ( b.room_name like CONCAT(CONCAT('%', #{bill.roomName}), '%') or
+  			b.transaction_object_name like CONCAT(CONCAT('%', #{bill.roomName}), '%'))
+  		</if>
+  		<if test="billId != null">
+  			and c.bill_id = #{billId}
+  		</if>
+  		<if test="costName != null">
+  			and c.cost_name = #{costName}
+  		</if>
+UNION
+
+SELECT
+  c.*,
+  b.*,
+  t2.building as h_building,
+  t2.floor as h_floor,
+  t2.no as h_no,
+  t2.unit as h_unit,
+  t2.community_name,
+  null
+FROM finance_cost c LEFT JOIN finance_bill b ON c.bill_id = b.id
+  INNER JOIN (SELECT
+                c.community_name,
+                h.id hid,
+                h.*,
+                u.id t2uid
+              FROM rental_house h INNER JOIN rental_community c ON c.id = h.community_id
+                LEFT JOIN auth_user u ON u.id = h.manager_user_id) t2 ON t2.hid = b.rental_house_id
+WHERE t2.t2uid =#{bill.userId} AND c.fee_amount != 0
+  		<if test="bill.billStatus != null">
+  			and b.bill_status = #{bill.billStatus}
+  		</if>
+  		<if test="bill.billStartDate != null">
+  			and <![CDATA[ b.actual_transaction_date >= ]]> #{bill.billStartDate}
+  		</if>
+  		<if test="bill.billEndDate != null">
+  			and<![CDATA[ b.actual_transaction_date <= ]]>  #{bill.billEndDate}
+  		</if>
+  		<if test="bill.fundFlow != null">
+  			and b.fund_flow = #{bill.fundFlow}
+  		</if>
+  		<if test="bill.roomName != null">
+  			and ( b.room_name like CONCAT(CONCAT('%', #{bill.roomName}), '%') or
+  			b.transaction_object_name like CONCAT(CONCAT('%', #{bill.roomName}), '%'))
+  		</if>
+  		<if test="billId != null">
+  			and c.bill_id = #{billId}
+  		</if>
+  		<if test="costName != null">
+  			and c.cost_name = #{costName}
+  		</if>
+  		<if test="startNum != null and pageSize != null">
+	  		 LIMIT #{startNum},#{pageSize}
+	  		 </if>
+  </select>
+  
+  <insert id="insert" parameterType="com.ace.acemanager.pojo.FinanceCost" >
+    insert into finance_cost (id, cost_name, fee_amount,
+      bill_id, create_date, update_date
+      )
+    values (#{id,jdbcType=INTEGER}, #{costName,jdbcType=VARCHAR}, #{feeAmount,jdbcType=REAL}, 
+      #{billId,jdbcType=INTEGER}, #{createDate,jdbcType=DATE}, #{updateDate,jdbcType=DATE}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.ace.acemanager.pojo.FinanceCost" >
+    insert into finance_cost
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="costName != null" >
+        cost_name,
+      </if>
+      <if test="feeAmount != null" >
+        fee_amount,
+      </if>
+      <if test="billId != null" >
+        bill_id,
+      </if>
+      <!-- <if test="createDate != null" >
+        create_date,
+      </if> -->
+      create_date,
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="costName != null" >
+        #{costName,jdbcType=VARCHAR},
+      </if>
+      <if test="feeAmount != null" >
+        #{feeAmount,jdbcType=REAL},
+      </if>
+      <if test="billId != null" >
+        #{billId,jdbcType=INTEGER},
+      </if>
+      <!-- <if test="createDate != null" >
+        #{createDate,jdbcType=DATE},
+      </if> -->
+      now(),
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ace.acemanager.pojo.FinanceCost" >
+    update finance_cost
+    <set >
+      <if test="costName != null" >
+        cost_name = #{costName,jdbcType=VARCHAR},
+      </if>
+      <if test="feeAmount != null" >
+        fee_amount = #{feeAmount,jdbcType=REAL},
+      </if>
+      <if test="billId != null" >
+        bill_id = #{billId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=DATE},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ace.acemanager.pojo.FinanceCost" >
+    update finance_cost
+    set cost_name = #{costName,jdbcType=VARCHAR},
+      fee_amount = #{feeAmount,jdbcType=REAL},
+      bill_id = #{billId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=DATE},
+      update_date = #{updateDate,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+    <!-- zkq 批量插入cost -->
+    <insert id="insertList" parameterType="list">
+        <choose>
+            <when test="costs != null and costs.size() > 0">
+                insert into finance_cost
+                ( cost_name,
+                fee_amount,
+                bill_id,
+                create_date,
+                update_date
+                )
+                values
+                <foreach collection="costs" item="item" index="index" separator="," >
+                    ( #{item.costName,jdbcType=VARCHAR},
+                    #{item.feeAmount,jdbcType=REAL},
+                    #{item.billId,jdbcType=INTEGER},
+                    NOW(),
+                    NOW()
+                    )
+                </foreach>
+            </when>
+            <otherwise>
+                select -1
+            </otherwise>
+        </choose>
+    </insert>
+
+    <!--zkq 根据合同id删除账单明细 -->
+    <delete id="deleteByContractId" parameterType="java.lang.Integer">
+        DELETE fc FROM finance_cost fc
+        WHERE fc.bill_id IN
+              (SELECT id FROM
+                  finance_bill fb WHERE fb.rental_contract_id = #{contractId,jdbcType=INTEGER})
+    </delete>
+
+    <!--zkq 根据合同id和bill状态删除账单明细-->
+    <delete id="deleteByContractIdAndBillStatus">
+        DELETE fc FROM finance_cost fc
+        WHERE fc.bill_id IN
+            (SELECT id FROM
+                finance_bill fb WHERE fb.rental_contract_id = #{contractId,jdbcType=INTEGER} and fb.bill_status = #{status,jdbcType=VARCHAR})
+    </delete>
+
+</mapper>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ace.acemanager.dao.work.WorkOrderMapper">
+	<resultMap id="CountOrderMap" type="com.ace.acemanager.pojo.WorkOrder">
+		<result column="count_num" jdbcType="INTEGER" property="count_num" />
+		<result column="count_status" jdbcType="INTEGER" property="count_status" />
+		<result column="count_engency" jdbcType="INTEGER" property="count_engency" />
+	</resultMap>
+	<resultMap id="BaseResultMap" type="com.ace.acemanager.pojo.WorkOrder">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="title" jdbcType="INTEGER" property="title" />
+		<result column="engency" jdbcType="INTEGER" property="engency" />
+		<result column="status" jdbcType="INTEGER" property="status" />
+		<result column="source" jdbcType="INTEGER" property="source" />
+		<result column="create_id" jdbcType="INTEGER" property="createId" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="next_id" jdbcType="INTEGER" property="nextId" />
+		<result column="owner_id" jdbcType="INTEGER" property="ownerId" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="customer_phone" jdbcType="VARCHAR" property="customerPhone" />
+		<result column="customer_gender" jdbcType="INTEGER" property="customerGender" />
+		<result column="customer_people" jdbcType="INTEGER" property="customerPeople" />
+		<result column="book_time" jdbcType="TIMESTAMP" property="bookTime" />
+		<result column="book_area" jdbcType="VARCHAR" property="bookArea" />
+		<result column="house_time" jdbcType="TIMESTAMP" property="houseTime" />
+		<result column="house_month" jdbcType="INTEGER" property="houseMonth" />
+		<result column="max_money" jdbcType="INTEGER" property="maxMoney" />
+		<result column="min_money" jdbcType="INTEGER" property="minMoney" />
+		<result column="house_type" jdbcType="INTEGER" property="houseType" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="remarks" jdbcType="VARCHAR" property="remarks" />
+		<association property="nextUser" javaType="com.ace.acemanager.pojo.User">
+			<result column="name" property="name" />
+		</association>
+	</resultMap>
+	<sql id="Join_Column_List">
+		o.id, o.title, o.engency, o.status, o.source, o.create_id, o.create_time,
+		o.next_id, o.owner_id, o.customer_name,
+		o.customer_phone, o.customer_gender, o.customer_people, o.book_time, o.book_area,
+		o.house_time,
+		o.house_month, o.max_money, o.min_money, o.house_type, o.update_time,
+		o.remarks,n.name
+	</sql>
+	<insert id="insertOrder" parameterType="com.ace.acemanager.pojo.WorkOrder" useGeneratedKeys="true" keyProperty="id">
+	insert into work_order
+	<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="title != null">title,</if>
+		<if test="engency != null">engency,</if>
+		<if test="status != null">status,</if>
+		<if test="source != null">source,</if>
+		<if test="createId != null">create_id,</if>
+		<if test="createTime != null">create_time,</if>
+		<if test="nextId != null">next_id,</if>
+		<if test="ownerId != null">owner_id,</if>
+		<if test="customerName != null">customer_name,</if>
+		<if test="customerPhone != null">customer_phone,</if>
+		<if test="customerGender != null">customer_gender,</if>
+		<if test="customerPeople != null">customer_people,</if>
+		<if test="bookTime != null">book_time,</if>
+		<if test="bookArea != null">book_area,</if>
+		<if test="houseTime != null">house_time,</if>
+		<if test="houseMonth != null">house_month,</if>
+		<if test="maxMoney != null">max_money,</if>
+		<if test="minMoney != null">min_money,</if>
+		<if test="houseType != null">house_type,</if>
+		<if test="updateTime != null">update_time,</if>
+		<if test="remarks != null">remarks,</if>
+	</trim>
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="title != null">#{title,jdbcType=INTEGER},</if>
+		<if test="engency != null">#{engency,jdbcType=INTEGER},</if>
+		<if test="status != null">#{status,jdbcType=INTEGER},</if>
+		<if test="source != null">#{source,jdbcType=INTEGER},</if>
+		<if test="createId != null">#{createId,jdbcType=INTEGER},</if>
+		<if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+		<if test="nextId != null">#{nextId,jdbcType=INTEGER},</if>
+		<if test="ownerId != null">#{ownerId,jdbcType=INTEGER},</if>
+		<if test="customerName != null">#{customerName,jdbcType=VARCHAR},</if>
+		<if test="customerPhone != null">#{customerPhone,jdbcType=VARCHAR},</if>
+		<if test="customerGender != null">#{customerGender,jdbcType=INTEGER},</if>
+		<if test="customerPeople != null">#{customerPeople,jdbcType=INTEGER},</if>
+		<if test="bookTime != null">#{bookTime,jdbcType=TIMESTAMP},</if>
+		<if test="bookArea != null">#{bookArea,jdbcType=VARCHAR},</if>
+		<if test="houseTime != null">#{houseTime,jdbcType=TIMESTAMP},</if>
+		<if test="houseMonth != null">#{houseMonth,jdbcType=INTEGER},</if>
+		<if test="maxMoney != null">#{maxMoney,jdbcType=INTEGER},</if>
+		<if test="minMoney != null">#{minMoney,jdbcType=INTEGER},</if>
+		<if test="houseType != null">#{houseType,jdbcType=INTEGER},</if>
+		<if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+		<if test="remarks != null">#{remarks,jdbcType=VARCHAR},</if>
+	</trim>
+	</insert>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Join_Column_List" />
+		from work_order o
+		left join auth_user u on u.id = o.owner_id
+		left join auth_user n on n.id = o.next_id
+		where o.id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="listWorkOrder" parameterType="com.ace.acemanager.pojo.WorkOrder"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Join_Column_List" />
+		from work_order o
+		left join auth_user u on u.id = o.owner_id
+		left join auth_user n on n.id = o.next_id
+		<where>
+			o.owner_id = #{ownerId,jdbcType=INTEGER}
+			and o.title = #{title,jdbcType=INTEGER}
+			<if test="source!=null and source!=''">
+				and o.source = #{source,jdbcType=INTEGER}
+			</if>
+			<if test="engency!=null and engency!=''">
+				and o.engency = #{engency,jdbcType=INTEGER}
+			</if>
+			<if test="status!=null and status!=''">
+				and o.status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="startTime!=null ">
+	  		<![CDATA[ 
+	  		and o.create_time > DATE (#{startTime,jdbcType=TIMESTAMP})
+	  		]]>
+			</if>
+			<if test="endTime!=null ">
+	  		<![CDATA[
+	  		and o.create_time < DATE (#{endTime,jdbcType=TIMESTAMP})
+	  		 ]]>
+			</if>
+			<if test="searchStr!=null and searchStr!='' ">
+				and( <![CDATA[
+	  		 o.customer_name LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%') or
+	  		 o.customer_phone LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%') or
+	  		 o.book_area LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%') or 
+	  		 u.name LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%')  
+	  		 ]]>)
+			</if>
+		</where>
+		ORDER BY 
+		<if test="title==1">
+		o.create_time DESC 
+		</if>
+		<if test="title==2 or title==3">
+		o.update_time DESC
+		</if>
+		<if test="pageSize>0 and startNum>=0">
+			limit #{startNum,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+		</if>
+	</select>
+	<select id="countOrderGroupBy" resultMap="CountOrderMap" parameterType="com.ace.acemanager.pojo.WorkOrder">
+		SELECT COUNT(*) AS 'count_num' ,
+		 <if test="title==1">o.`engency` AS 'count_engency' </if>
+		 <if test="title==2 or title==3">o.`status` AS 'count_status'</if>
+		FROM work_order o
+		 LEFT JOIN auth_user u ON o.`owner_id`=u.id
+		<where>
+			o.owner_id = #{ownerId,jdbcType=INTEGER}
+			and o.title = #{title,jdbcType=INTEGER}
+			<if test="source!=null and source!=''">
+				and o.source = #{source,jdbcType=INTEGER}
+			</if>
+			<if test="engency>0">
+				and o.engency = #{engency,jdbcType=INTEGER}
+			</if>
+			<if test="status>0">
+				and o.status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="startTime!=null ">
+	  		<![CDATA[ 
+	  		and o.create_time > DATE (#{startTime,jdbcType=TIMESTAMP})
+	  		]]>
+			</if>
+			<if test="endTime!=null ">
+	  		<![CDATA[
+	  		and o.create_time < DATE (#{endTime,jdbcType=TIMESTAMP})
+	  		 ]]>
+			</if>
+			<if test="searchStr!=null and searchStr!='' ">
+				and( <![CDATA[
+	  		 o.customer_name LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%') or
+	  		 o.customer_phone LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%') or
+	  		 o.book_area LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%') or 
+	  		 u.name LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%')  
+	  		 ]]>)
+			</if>
+		</where>
+		 
+		 <if test="title==1"> GROUP BY o.`engency` order by o.`engency`</if>
+		 <if test="title==2 or title==3">GROUP BY o.`status` order by o.`status` </if>
+	</select>
+	<select id="countOrder" resultType="java.lang.Integer" parameterType="com.ace.acemanager.pojo.WorkOrder">
+		select count(*)
+		from work_order o
+		left join auth_user u on u.id = o.owner_id
+		<where>
+			o.owner_id = #{ownerId,jdbcType=INTEGER}
+			and o.title = #{title,jdbcType=INTEGER}
+			<if test="source!=null and source!=''">
+				and o.source = #{source,jdbcType=INTEGER}
+			</if>
+			<if test="engency>0">
+				and o.engency = #{engency,jdbcType=INTEGER}
+			</if>
+			<if test="status>0">
+				and o.status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="startTime!=null ">
+	  		<![CDATA[ 
+	  		and o.create_time > DATE (#{startTime,jdbcType=TIMESTAMP})
+	  		]]>
+			</if>
+			<if test="endTime!=null ">
+	  		<![CDATA[
+	  		and o.create_time < DATE (#{endTime,jdbcType=TIMESTAMP})
+	  		 ]]>
+			</if>
+			<if test="searchStr!=null and searchStr!='' ">
+				and( <![CDATA[
+	  		 o.customer_name LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%') or
+	  		 o.customer_phone LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%') or
+	  		 o.book_area LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%') or 
+	  		 u.name LIKE concat(concat('%',#{searchStr,jdbcType=VARCHAR}),'%')  
+	  		 ]]>)
+			</if>
+		</where>
+	</select>
+	<update id="statusOrder"  parameterType="com.ace.acemanager.pojo.WorkOrder">
+		update work_order
+		<set>
+		<if test="nextId == null">next_id = #{nextId,jdbcType=INTEGER},</if>
+		 <if test="title != null">title = #{title,jdbcType=INTEGER},</if>
+		 <if test="status != null">status = #{status,jdbcType=INTEGER},</if>
+		 <if test="remarks != null">remarks = #{remarks,jdbcType=VARCHAR},</if>
+       		 <if test="updateTime != null" >update_time = #{updateTime,jdbcType=TIMESTAMP},</if>
+		</set>
+		 where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="distributionOrder" parameterType="com.ace.acemanager.pojo.WorkOrder">
+		update work_order
+		<set>
+		 <if test="nextId != null">next_id = #{nextId,jdbcType=INTEGER},</if>
+       		 <if test="updateTime != null" >update_time = #{updateTime,jdbcType=TIMESTAMP},</if>
+		</set>
+		 where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateOrder" parameterType="com.ace.acemanager.pojo.WorkOrder">
+	update work_order
+	<set>
+		<if test="title != null">title = #{title,jdbcType=INTEGER},</if>
+		<if test="engency != null">engency = #{engency,jdbcType=INTEGER},</if>
+		<if test="status != null">status = #{status,jdbcType=INTEGER},</if>
+		<if test="source != null">source = #{source,jdbcType=INTEGER},</if>
+		<if test="customerName != null">customer_name = #{customerName,jdbcType=VARCHAR},</if>
+		<if test="customerPhone != null">customer_phone = #{customerPhone,jdbcType=VARCHAR},</if>
+		<if test="customerGender != null">customer_gender = #{customerGender,jdbcType=INTEGER},</if>
+		<if test="customerPeople != null">customer_people = #{customerPeople,jdbcType=INTEGER},</if>
+		<if test="bookTime != null">book_time = #{bookTime,jdbcType=TIMESTAMP},</if>
+		<if test="bookArea != null">book_area = #{bookArea,jdbcType=VARCHAR},</if>
+		<if test="houseTime != null">house_time = #{houseTime,jdbcType=TIMESTAMP},</if>
+		<if test="houseMonth != null">house_month = #{houseMonth,jdbcType=INTEGER},</if>
+		<if test="maxMoney != null">max_money = #{maxMoney,jdbcType=INTEGER},</if>
+		<if test="minMoney != null">min_money = #{minMoney,jdbcType=INTEGER},</if>
+		<if test="houseType != null">house_type = #{houseType,jdbcType=INTEGER},</if>
+		<if test="updateTime != null">update_time = #{updateTime,jdbcType=TIMESTAMP},</if>
+		<if test="remarks != null">remarks = #{remarks,jdbcType=VARCHAR},</if>
+	</set>
+	where id = #{id,jdbcType=INTEGER} 
+ 	</update>
+ 	<update id="dealOrder" parameterType="com.ace.acemanager.pojo.WorkOrder">
+ 	update work_order	set title=3,status=7
+	where id = #{id,jdbcType=INTEGER} 
+ 	</update>
+ 	<delete id="deleteOrder" parameterType="java.lang.Integer">
+ 	delete from work_order where id=#{id,jdbcType=INTEGER}
+ 	</delete>
+ 	<update id="deleteOrderBefore" parameterType="java.lang.Integer">
+ 	update work_order	set next_id=null,create_id=null,owner_id=null
+	where id = #{id,jdbcType=INTEGER}
+ 	</update>
+</mapper>

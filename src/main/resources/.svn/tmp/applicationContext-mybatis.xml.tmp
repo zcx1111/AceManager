@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+    <beans xmlns="http://www.springframework.org/schema/beans"  
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+            xmlns:aop="http://www.springframework.org/schema/aop"  
+            xmlns:p="http://www.springframework.org/schema/p"  
+            xmlns:tx="http://www.springframework.org/schema/tx"  
+            xmlns:context="http://www.springframework.org/schema/context"  
+            xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd   
+					            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd   
+					            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">  
+           
+        <!-- Properties文件读取配置，base的properties -->  
+        <context:property-placeholder location="classpath:jdbc.properties"/>  
+           
+        <!-- JNDI获取数据源(使用dbcp连接池) -->  
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
+		    <property name="driverClassName" value="${jdbc.driverClassName}"/>
+		    <property name="url" value="${jdbc.url}"/>
+		    <property name="username" value="${jdbc.username}"/>
+		    <property name="password" value="${jdbc.password}"/>
+			<property name="initialSize" value="${dbcp.initialSize}"/>
+			<property name="maxActive" value="${dbcp.maxActive}"/>
+			<property name="maxIdle" value="${dbcp.maxIdle}"/>
+			<property name="minIdle" value="${dbcp.minIdle}"/>
+			<property name="maxWait" value="${dbcp.maxWait}"/>
+			<!-- 若当前空闲连接数<2 && (当前活动数>最大活动数-3),则触发回收废弃连接 -->
+			<property name="removeAbandonedTimeout" value="${dbcp.removeAbandonedTimeout}"/>
+			<property name="removeAbandoned" value="${dbcp.removeAbandoned}"/>
+			<!-- sql 心跳:保证连接池中连接时真实有效的连接     Evict定时循环校验 -->
+			<property name= "testWhileIdle" value="true"/>
+			<property name= "testOnBorrow" value="false"/>
+			<property name= "testOnReturn" value="false"/>
+			<property name= "validationQuery" value="select 1"/>
+			<property name= "timeBetweenEvictionRunsMillis" value="60000"/>
+			<property name= "numTestsPerEvictionRun" value="${dbcp.maxActive}"/>
+	 	</bean> 
+	 	
+        <!--redis 配置 开始-->
+	    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+	        <property  name="maxActive"  value="90" />  
+	        <property  name="maxIdle"   value="5" />  
+	        <property  name="maxWait"  value="1000" />  
+	        <property  name="testOnBorrow"  value="true" /> 
+	    </bean>
+	    <bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy" >
+	    	<constructor-arg ref="jedisPoolConfig"/>
+	    	<constructor-arg value="127.0.0.1"/>
+	    	<constructor-arg value="6379"/>
+	    </bean>
+	    <bean id="redisAPI" class="com.ace.acemanager.common.RedisAPI">
+	    	<property name="jedisPool" ref="jedisPool"/>
+	    </bean>
+    	<!-- redis 配置结束 -->
+
+
+		<!-- mybatis-spring 配置 结束 -->
+            
+            
+		<!-- enable autowire 启用spring mvc 注解-->  
+		<context:annotation-config />
+		<context:component-scan base-package="com.ace.acemanager">
+		</context:component-scan>
+		<!-- enable transaction demarcation with annotations -->  
+		<tx:annotation-driven />
+           
+        <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->  
+		<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+			<property name="dataSource" ref="dataSource" />  
+		</bean>  
+		
+		 <!-- define the SqlSessionFactory, notice that configLocation is not needed when you use MapperFactoryBean -->  
+		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+		    <property name="dataSource" ref="dataSource" />  
+		    <property name="configLocation" value="classpath:mybatis-config.xml" />  
+		</bean> 
+		 
+		<!-- AOP 事务处理 开始 -->    
+		<aop:aspectj-autoproxy />
+		<aop:config  proxy-target-class="true">
+			<aop:pointcut expression="execution(* *com.ace.acemanager.service..*(..))" id="transService"/>
+			<aop:advisor pointcut-ref="transService" advice-ref="txAdvice" />
+		</aop:config>
+		<tx:advice id="txAdvice" transaction-manager="transactionManager">  
+		    <tx:attributes>
+		       <!-- 异常回滚  -->  
+		       <tx:method name="ace*"  propagation="REQUIRED" rollback-for="Exception"  />
+		    </tx:attributes>  
+		</tx:advice> 
+		<!-- AOP 事务处理 结束 -->
+	       	
+  		<!-- scan for mappers and let them be autowired -->  
+        <!-- Mapper接口所在包名，Spring会自动查找其下的Mapper -->
+        <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+            <property name="basePackage" value="com.ace.acemanager.dao" />  
+        </bean>
+        
+</beans>  

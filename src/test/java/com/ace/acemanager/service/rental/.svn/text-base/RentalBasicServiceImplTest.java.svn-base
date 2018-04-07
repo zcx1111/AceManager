@@ -1,0 +1,56 @@
+package com.ace.acemanager.service.rental;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.ace.acemanager.pojo.RentalCommunity;
+import com.ace.acemanager.pojo.RentalHouse;
+import com.ace.acemanager.pojo.User;
+/**
+ * @author Liuqi
+ * 2017-7-11
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:applicationContext-mybatis.xml", "classpath:spring-servlet.xml", "classpath:mybatis-config.xml"})
+public class RentalBasicServiceImplTest {
+	private Logger logger = Logger.getLogger(RentalBasicServiceImplTest.class);
+
+	@Resource
+	private RentalBasicServiceImpl rentalBasicServiceImpl;
+
+	@Test
+	public void testCommunityListByUserId() throws Exception {
+		User user = new User();
+		user.setId(2);
+		List<RentalCommunity> result = rentalBasicServiceImpl.getCommunityListByUserId(user);
+		logger.debug("用户  " + user.getId() + " 对应的房间列表===>");
+		for (RentalCommunity comm : result) {
+			logger.debug(comm.getProvince() + "\t" + comm.getCity() + "\t" + comm.getCommunityName());
+		}
+	}
+
+	@Test
+	public void testGetHouseDetailByHouseId() throws Exception {
+		RentalHouse house = new RentalHouse();
+		house.setId(1);
+		RentalHouse result = rentalBasicServiceImpl.getHouseDetailByHouseId(house);
+		logger.debug("房源===>" + result);
+		logger.debug("所属小区===>" + result.getCommunity());
+	}
+	
+	@Test
+	public void testAceAddHouse() throws Exception {
+		RentalHouse house = new RentalHouse();
+		house.setInRenovation("什么东西");
+		rentalBasicServiceImpl.aceAddHouse(house);
+		logger.debug("添加成功");
+		logger.debug("增加的房源ID===>" + house.getId());
+	}
+	
+}

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ace.acemanager.dao.rental.contract.RentalOtherCostInfoMapper">
+    <resultMap id="BaseResultMap" type="com.ace.acemanager.pojo.RentalOtherCostInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="cost_name" property="costName" jdbcType="VARCHAR"/>
+        <result column="cost_type" property="costType" jdbcType="VARCHAR"/>
+        <result column="unit_price" property="unitPrice" jdbcType="REAL"/>
+        <result column="total_price" property="totalPrice" jdbcType="REAL"/>
+        <result column="unit_name" property="unitName" jdbcType="VARCHAR"/>
+        <result column="contract_id" property="contractId" jdbcType="INTEGER"/>
+        <result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, cost_name, cost_type, unit_price, total_price, unit_name, contract_id, modified_time, create_time
+    </sql>
+
+    <select id="getOtherCostInfoListByContractId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM rental_other_cost_info roci
+        WHERE roci.contract_id = #{contractId}
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from rental_other_cost_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE FROM rental_other_cost_info
+        WHERE id = #{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByContractId" parameterType="java.lang.Integer">
+        DELETE FROM rental_other_cost_info  WHERE contract_id = #{contractId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.ace.acemanager.pojo.RentalOtherCostInfo">
+        insert into rental_other_cost_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="costName != null">
+                cost_name,
+            </if>
+            <if test="costType != null">
+                cost_type,
+            </if>
+            <if test="unitPrice != null">
+                unit_price,
+            </if>
+            <if test="totalPrice != null">
+                total_price,
+            </if>
+            <if test="unitName != null">
+                unit_name,
+            </if>
+            <if test="contractId != null">
+                contract_id,
+            </if>
+                modified_time,
+                create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="costName != null">
+                #{costName,jdbcType=VARCHAR},
+            </if>
+            <if test="costType != null">
+                #{costType,jdbcType=VARCHAR},
+            </if>
+            <if test="unitPrice != null">
+                #{unitPrice,jdbcType=REAL},
+            </if>
+            <if test="totalPrice != null">
+                #{totalPrice,jdbcType=REAL},
+            </if>
+            <if test="unitName != null">
+                #{unitName,jdbcType=REAL},
+            </if>
+            <if test="contractId != null">
+                #{contractId,jdbcType=INTEGER},
+            </if>
+                NOW(),
+                NOW(),
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ace.acemanager.pojo.RentalOtherCostInfo">
+        update rental_other_cost_info
+        <set>
+            <if test="costName != null">
+                cost_name = #{costName,jdbcType=VARCHAR},
+            </if>
+            <if test="costType != null">
+                cost_type = #{costType,jdbcType=VARCHAR},
+            </if>
+            <if test="unitPrice != null">
+                unit_price = #{unitPrice,jdbcType=REAL},
+            </if>
+            <if test="totalPrice != null">
+                total_price = #{totalPrice,jdbcType=REAL},
+            </if>
+            <if test="unitName != null">
+                unit_name = #{unitName,jdbcType=REAL},
+            </if>
+            <if test="contractId != null">
+                contract_id = #{contractId,jdbcType=INTEGER},
+            </if>
+                modified_time = NOW(),
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.ace.acemanager.pojo.RentalOtherCostInfo">
+        UPDATE rental_other_cost_info
+        SET cost_name     = #{costName,jdbcType=VARCHAR},
+            cost_type     = #{costType,jdbcType=VARCHAR},
+            unit_price    = #{unitPrice,jdbcType=REAL},
+            total_price   = #{totalPrice,jdbcType=REAL},
+            unit_name     = #{unitName,jdbcType=REAL},
+            contract_id   = #{contractId,jdbcType=INTEGER},
+            modified_time = NOW()
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <insert id="insertList" parameterType="list" keyProperty="id" useGeneratedKeys="true">
+        <choose>
+            <when test="list != null and list.size() > 0">
+                insert into rental_other_cost_info
+                (cost_name, cost_type, unit_price, total_price, unit_name, contract_id, modified_time, create_time)
+                values
+                <foreach collection="list" item="item" index="index" separator=",">
+                    (
+                    #{item.costName,jdbcType=VARCHAR},
+                    #{item.costType,jdbcType=VARCHAR},
+                    #{item.unitPrice,jdbcType=REAL},
+                    #{item.totalPrice,jdbcType=REAL},
+                    #{item.unitName,jdbcType=REAL},
+                    #{item.contractId,jdbcType=INTEGER},
+                    NOW(),
+                    NOW()
+                    )
+                </foreach>
+            </when>
+            <otherwise>
+                select -1
+            </otherwise>
+        </choose>
+
+
+    </insert>
+</mapper>

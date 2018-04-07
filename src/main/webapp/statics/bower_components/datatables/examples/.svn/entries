@@ -1,0 +1,86 @@
+10
+
+dir
+214
+svn://119.23.23.237/ace/AceManager/src/main/webapp/statics/bower_components/datatables/examples
+svn://119.23.23.237/ace
+
+
+
+2017-07-12T02:04:41.622175Z
+2
+lq
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+b129390b-88e9-4098-b366-f2360847910d
+
+ajax
+dir
+
+basic_init
+dir
+
+advanced_init
+dir
+
+api
+dir
+
+examples_support
+dir
+
+server_side
+dir
+
+index.html
+file
+
+
+
+
+2017-07-12T02:09:10.245251Z
+1091934e10bfc30e53011fe5414a9d30
+2017-07-12T02:04:41.622175Z
+2
+lq
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+8636
+
+data_sources
+dir
+
+plug-ins
+dir
+

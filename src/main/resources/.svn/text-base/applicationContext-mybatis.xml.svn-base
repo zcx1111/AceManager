@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd   
+					            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd   
+					            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- Properties文件读取配置，base的properties -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+
+	<!-- JNDI获取数据源(使用dbcp连接池) -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" scope="singleton">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="initialSize" value="${dbcp.initialSize}" />
+		<property name="maxActive" value="${dbcp.maxActive}" />
+		<property name="maxIdle" value="${dbcp.maxIdle}" />
+		<property name="minIdle" value="${dbcp.minIdle}" />
+		<property name="maxWait" value="${dbcp.maxWait}" />
+		<!-- 若当前空闲连接数<2 && (当前活动数>最大活动数-3),则触发回收废弃连接 -->
+		<property name="removeAbandonedTimeout" value="${dbcp.removeAbandonedTimeout}" />
+		<property name="removeAbandoned" value="${dbcp.removeAbandoned}" />
+		<!-- sql 心跳:保证连接池中连接时真实有效的连接 Evict定时循环校验 -->
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<property name="validationQuery" value="select 1" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<property name="numTestsPerEvictionRun" value="${dbcp.maxActive}" />
+	</bean>
+
+	<!--redis 配置 开始 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxActive" value="90" />
+		<property name="maxIdle" value="5" />
+		<property name="maxWait" value="1000" />
+		<property name="testOnBorrow" value="true" />
+	</bean>
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool"
+		destroy-method="destroy">
+        <constructor-arg index="0" ref="jedisPoolConfig"/>
+        <constructor-arg index="1" value="119.23.23.237"/>
+        <constructor-arg index="2" value="6379" type="int"/>
+        <constructor-arg index="3" value="2000" type="int"/>
+        <constructor-arg index="4" value="Ace123456"/>
+	</bean>
+	<bean id="redisAPI" class="com.ace.acemanager.common.RedisAPI">
+		<property name="jedisPool" ref="jedisPool" />
+	</bean>
+	<!-- redis 配置结束 -->
+
+	<!--<bean id="aceMessage" class="com.ace.acemanager.util.AceMessage"/>-->
+
+	<!-- mybatis-spring 配置 结束 -->
+
+
+	<!-- enable autowire 启用spring mvc 注解 -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.ace.acemanager">
+	</context:component-scan>
+	<!-- enable transaction demarcation with annotations -->
+	<tx:annotation-driven />
+
+	<!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- define the SqlSessionFactory, notice that configLocation is not needed 
+		when you use MapperFactoryBean -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+	</bean>
+
+	<!-- AOP 事务处理 开始 -->
+	<aop:aspectj-autoproxy />
+	<aop:config proxy-target-class="true">
+		<aop:pointcut expression="execution(* *com.ace.acemanager.service..*(..))"
+			id="transService" />
+		<aop:advisor pointcut-ref="transService" advice-ref="txAdvice" />
+	</aop:config>
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- 异常回滚 -->
+			<tx:method name="ace*" propagation="REQUIRED" rollback-for="Exception" />
+		</tx:attributes>
+	</tx:advice>
+	<!-- AOP 事务处理 结束 -->
+
+	<!-- scan for mappers and let them be autowired -->
+	<!-- Mapper接口所在包名，Spring会自动查找其下的Mapper -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.ace.acemanager.dao" />
+	</bean>
+
+	<!-- shiro配置 -->
+	<!-- 自定义Realm -->
+	<bean id="myRealm" class="com.ace.acemanager.realm.MyRealm" />
+
+	<!-- 安全管理器 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="myRealm" />
+	</bean>
+
+	<!-- Shiro过滤器 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- Shiro的核心安全接口,这个属性是必须的 -->
+		<property name="securityManager" ref="securityManager" />
+		<!-- 身份认证失败，则跳转到登录页面的配置 -->
+		<property name="loginUrl" value="/login.html" />
+		<!-- 权限认证失败，则跳转到指定页面 -->
+		<property name="unauthorizedUrl" value="/unauthor.html" />
+		<!-- Shiro连接约束配置,即过滤链的定义 -->
+		<property name="filterChainDefinitions">
+			<value>
+				/login.html=anon
+				<!-- /admin*=authc -->
+				<!-- 派单相关功能 -->
+				<!-- 进入业务单首页，/work.html 	根据title查看业务单状态,/work/title
+				查看业务单详情，/work/order/**		搜索业务单/work/search.html-->
+				/work=perms["work"]
+				/work.html=perms["work"]
+				/work/title/**=perms["work"]
+				/work/order/**=perms["work"]
+				/work/search/**=perms["work"]
+				<!-- 增加业务单 -->
+				/work/insert/**=perms["work_insert"]
+				<!-- 业务单签约，/work/deal/** 更改进度 /work/status/**，
+				打开编辑模态框 /work/updateSearch/** -->
+				/work/deal/**=perms["work_update"]
+				/work/status/**=perms["work_update"]
+				/work/updateSearch/**=perms["work_update"]
+
+				/work/update/**=perms["work_update"]
+				/work/distribution/**=perms["work_distribution"]
+				/work/delete/**=perms["work_delete"]
+
+
+				<!-- 租务功能 -->
+				/rentalBasic/rentalIndex.html=perms["rental"]
+
+
+				<!--财务-->
+				/finance/list =perms["finance_payment_view"]
+				/finance/listAllCost =perms["finance_flow_view"]
+				/finance/budget/income =perms["finance_flow_pre_in_view"]
+				/finance/budget/payment =perms["finance_flow_pre_out_view"]
+
+                <!-- 权限功能 -->
+				/authority.html=perms["authority"]
+				/authority/**=perms["authority"]
+				
+			</value>
+		</property>
+	</bean>
+
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!-- 开启Shiro注解 -->
+	<bean
+		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		depends-on="lifecycleBeanPostProcessor" />
+	<bean
+		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+	
+	<!-- Quartz 定时任务配置    start -->
+	
+	<!-- 定义任务类(业务对象) -->
+	<bean id="reportJobTask" class="com.ace.acemanager.util.ReportJobTask"/>
+	<!-- 任务调度细节 -->
+	<bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="reportJobTask"/><!-- 任务目标类 -->
+		<property name="targetMethod" value="dayReportCounting"/><!-- 任务目标方法 -->
+		<property name="concurrent" value="false"/><!-- 任务不并发调度 -->
+	</bean>
+	<!-- 调度触发器 -->
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="jobDetail"/>
+		<property name="cronExpression" value="01 00 00 * * ?"/>
+	</bean>
+	<!-- 调度工厂 -->
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cronTrigger"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Quartz 定时任务配置    end -->
+
+</beans>  

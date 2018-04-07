@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ace.acemanager.dao.rental.contract.RentalMeterReadMapper" >
+  <resultMap id="BaseResultMap" type="com.ace.acemanager.pojo.RentalMeterRead" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="meter_type" property="meterType" jdbcType="VARCHAR" />
+    <result column="read_time" property="readTime" jdbcType="TIMESTAMP" />
+    <result column="meter_number" property="meterNumber" jdbcType="INTEGER" />
+    <result column="other_cost_info_id" property="otherCostInfoId" jdbcType="INTEGER" />
+    <result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap type="com.ace.acemanager.pojo.RentalMeterRead" id="RentalMeterReadMap">
+  	<id column="id" property="id" jdbcType="INTEGER" />
+    <result column="meter_type" property="meterType" jdbcType="VARCHAR" />
+    <result column="read_time" property="readTime" jdbcType="TIMESTAMP" />
+    <result column="meter_number" property="meterNumber" jdbcType="INTEGER" />
+    <result column="other_cost_info_id" property="otherCostInfoId" jdbcType="INTEGER" />
+    <result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <association property="rentalOtherCostInfo" javaType="com.ace.acemanager.pojo.RentalOtherCostInfo">
+    	<id column="o_id" property="id" jdbcType="INTEGER"/>
+        <result column="cost_name" property="costName" jdbcType="VARCHAR"/>
+        <result column="cost_type" property="costType" jdbcType="VARCHAR"/>
+        <result column="unit_price" property="unitPrice" jdbcType="REAL"/>
+        <result column="total_price" property="totalPrice" jdbcType="REAL"/>
+        <result column="unit_name" property="unitName" jdbcType="VARCHAR"/>
+        <result column="contract_id" property="contractId" jdbcType="INTEGER"/>
+        <result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
+        <result column="o_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </association>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, meter_type, read_time, meter_number, other_cost_info_id, modified_time, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 通过账单id查询抄表 -->
+ <select id="selectByMeterByBillId" parameterType="java.lang.Integer" resultMap="RentalMeterReadMap">
+  	SELECT r.*,
+  	o.id As o_id,unit_price,unit_name,cost_name
+  	FROM rental_meter_read r 
+	LEFT JOIN rental_other_cost_info o ON o.id = r.other_cost_info_id 
+	LEFT JOIN finance_bill b ON b.`rental_contract_id` = o.contract_id
+ 	 WHERE b.id = #{billId,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 通过账单id查cost明细 -->
+  <select id="selectByMeterByOtherId" resultType="java.lang.Integer">
+  	select c.id
+  		FROM rental_other_cost_info o
+	    LEFT JOIN finance_bill b ON b.`rental_contract_id` = o.contract_id
+	 	LEFT JOIN finance_cost c ON o.cost_name = c.`cost_name`
+	 	WHERE b.`id` = c.`bill_id` AND o.cost_name = #{costName}
+	 	AND  b.id = #{billId,jdbcType=INTEGER}
+  </select>
+  <!-- 通过合同id查询抄表 -->
+  <select id="selectByMeter" parameterType="java.lang.Integer" resultMap="RentalMeterReadMap">
+  	select r.*,b.*,
+  	o.id As o_id,unit_price,unit_name
+    FROM rental_meter_read r LEFT JOIN rental_other_cost_info o ON r.other_cost_info_id = o.id
+ LEFT JOIN finance_bill b ON b.rental_contract_id = o.contract_id WHERE b.rental_contract_id = #{rentalContractId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rental_meter_read
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByContractId" parameterType="java.lang.Integer">
+        DELETE FROM rental_meter_read
+        WHERE other_cost_info_id IN
+          (SELECT id FROM rental_other_cost_info WHERE contract_id = #{contractId,jdbcType=INTEGER})
+    </delete>
+    <insert id="insert" parameterType="com.ace.acemanager.pojo.RentalMeterRead" >
+    insert into rental_meter_read (id, meter_type, read_time, 
+      meter_number, other_cost_info_id, modified_time, 
+      create_time)
+    values (#{id,jdbcType=INTEGER}, #{meterType,jdbcType=VARCHAR}, #{readTime,jdbcType=TIMESTAMP}, 
+      #{meterNumber,jdbcType=INTEGER}, #{otherCostInfoId,jdbcType=INTEGER}, #{modifiedTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ace.acemanager.pojo.RentalMeterRead" >
+    insert into rental_meter_read
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="meterType != null" >
+        meter_type,
+      </if>
+      <if test="readTime != null" >
+        read_time,
+      </if>
+      <if test="meterNumber != null" >
+        meter_number,
+      </if>
+      <if test="otherCostInfoId != null" >
+        other_cost_info_id,
+      </if>
+      <if test="modifiedTime != null" >
+        modified_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="meterType != null" >
+        #{meterType,jdbcType=VARCHAR},
+      </if>
+      <if test="readTime != null" >
+        #{readTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meterNumber != null" >
+        #{meterNumber,jdbcType=INTEGER},
+      </if>
+      <if test="otherCostInfoId != null" >
+        #{otherCostInfoId,jdbcType=INTEGER},
+      </if>
+      <if test="modifiedTime != null" >
+        #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <insert id="insertList" parameterType="list">
+        <choose>
+        <when test="meterReads != null and meterReads.size() > 0">
+        insert into rental_meter_read
+        (
+        meter_type,
+        read_time,
+        meter_number,
+        other_cost_info_id,
+        bill_id,
+        modified_time,
+        create_time)
+        values
+        <foreach collection="meterReads" item="item" index="index" separator="," >
+            (
+            #{item.meterType,jdbcType=VARCHAR},
+            #{item.readTime,jdbcType=TIMESTAMP},
+            #{item.meterNumber,jdbcType=INTEGER},
+            #{item.otherCostInfoId,jdbcType=INTEGER},
+            #{item.billId,jdbcType=INTEGER},
+            NOW(),
+            NOW()
+            )
+        </foreach>
+        </when>
+            <otherwise>
+                select -1
+            </otherwise>
+        </choose>
+    </insert>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.ace.acemanager.pojo.RentalMeterRead" >
+    update rental_meter_read
+    <set >
+      <if test="meterType != null" >
+        meter_type = #{meterType,jdbcType=VARCHAR},
+      </if>
+      <if test="readTime != null" >
+        read_time = #{readTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meterNumber != null" >
+        meter_number = #{meterNumber,jdbcType=INTEGER},
+      </if>
+      <if test="otherCostInfoId != null" >
+        other_cost_info_id = #{otherCostInfoId,jdbcType=INTEGER},
+      </if>
+      <if test="modifiedTime != null" >
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ace.acemanager.pojo.RentalMeterRead" >
+    update rental_meter_read
+    set meter_type = #{meterType,jdbcType=VARCHAR},
+      read_time = #{readTime,jdbcType=TIMESTAMP},
+      meter_number = #{meterNumber,jdbcType=INTEGER},
+      other_cost_info_id = #{otherCostInfoId,jdbcType=INTEGER},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

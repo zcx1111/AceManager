@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ace.acemanager.dao.report.StatisticsOwnerListMapper" >
+  <resultMap id="BaseResultMap" type="com.ace.acemanager.pojo.StatisticsOwnerList" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="contract_status" property="contractStatus" jdbcType="VARCHAR" />
+    <result column="house_info" property="houseInfo" jdbcType="VARCHAR" />
+    <result column="owner_name" property="ownerName" jdbcType="VARCHAR" />
+    <result column="contact" property="contact" jdbcType="VARCHAR" />
+    <result column="trusteeship_duration" property="trusteeshipDuration" jdbcType="VARCHAR" />
+    <result column="contract_create_time" property="contractCreateTime" jdbcType="TIMESTAMP" />
+    <result column="contract_start_time" property="contractStartTime" jdbcType="TIMESTAMP" />
+    <result column="contract_end_time" property="contractEndTime" jdbcType="TIMESTAMP" />
+    <result column="pay_type" property="payType" jdbcType="VARCHAR" />
+    <result column="month_rent_money" property="monthRentMoney" jdbcType="REAL" />
+    <result column="cash_money" property="cashMoney" jdbcType="REAL" />
+    <result column="rerent_count" property="rerentCount" jdbcType="INTEGER" />
+    <result column="offrent_time" property="offrentTime" jdbcType="TIMESTAMP" />
+    <result column="offrent_type" property="offrentType" jdbcType="VARCHAR" />
+    <result column="actual_check_duration" property="actualCheckDuration" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, contract_status, house_info, owner_name, contact, trusteeship_duration, contract_create_time, 
+    contract_start_time, contract_end_time, pay_type, month_rent_money, cash_money, rerent_count, 
+    offrent_time, offrent_type, actual_check_duration, create_time, modified_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from statistics_owner_list
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from statistics_owner_list
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ace.acemanager.pojo.StatisticsOwnerList" >
+    insert into statistics_owner_list (id, contract_status, house_info, 
+      owner_name, contact, trusteeship_duration, 
+      contract_create_time, contract_start_time, 
+      contract_end_time, pay_type, month_rent_money, 
+      cash_money, rerent_count, offrent_time, 
+      offrent_type, actual_check_duration, create_time, 
+      modified_time)
+    values (#{id,jdbcType=INTEGER}, #{contractStatus,jdbcType=VARCHAR}, #{houseInfo,jdbcType=VARCHAR}, 
+      #{ownerName,jdbcType=VARCHAR}, #{contact,jdbcType=VARCHAR}, #{trusteeshipDuration,jdbcType=VARCHAR}, 
+      #{contractCreateTime,jdbcType=TIMESTAMP}, #{contractStartTime,jdbcType=TIMESTAMP}, 
+      #{contractEndTime,jdbcType=TIMESTAMP}, #{payType,jdbcType=VARCHAR}, #{monthRentMoney,jdbcType=REAL}, 
+      #{cashMoney,jdbcType=REAL}, #{rerentCount,jdbcType=INTEGER}, #{offrentTime,jdbcType=TIMESTAMP}, 
+      #{offrentType,jdbcType=VARCHAR}, #{actualCheckDuration,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifiedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ace.acemanager.pojo.StatisticsOwnerList" >
+    insert into statistics_owner_list
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="contractStatus != null" >
+        contract_status,
+      </if>
+      <if test="houseInfo != null" >
+        house_info,
+      </if>
+      <if test="ownerName != null" >
+        owner_name,
+      </if>
+      <if test="contact != null" >
+        contact,
+      </if>
+      <if test="trusteeshipDuration != null" >
+        trusteeship_duration,
+      </if>
+      <if test="contractCreateTime != null" >
+        contract_create_time,
+      </if>
+      <if test="contractStartTime != null" >
+        contract_start_time,
+      </if>
+      <if test="contractEndTime != null" >
+        contract_end_time,
+      </if>
+      <if test="payType != null" >
+        pay_type,
+      </if>
+      <if test="monthRentMoney != null" >
+        month_rent_money,
+      </if>
+      <if test="cashMoney != null" >
+        cash_money,
+      </if>
+      <if test="rerentCount != null" >
+        rerent_count,
+      </if>
+      <if test="offrentTime != null" >
+        offrent_time,
+      </if>
+      <if test="offrentType != null" >
+        offrent_type,
+      </if>
+      <if test="actualCheckDuration != null" >
+        actual_check_duration,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifiedTime != null" >
+        modified_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="contractStatus != null" >
+        #{contractStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="houseInfo != null" >
+        #{houseInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerName != null" >
+        #{ownerName,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null" >
+        #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="trusteeshipDuration != null" >
+        #{trusteeshipDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="contractCreateTime != null" >
+        #{contractCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contractStartTime != null" >
+        #{contractStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contractEndTime != null" >
+        #{contractEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payType != null" >
+        #{payType,jdbcType=VARCHAR},
+      </if>
+      <if test="monthRentMoney != null" >
+        #{monthRentMoney,jdbcType=REAL},
+      </if>
+      <if test="cashMoney != null" >
+        #{cashMoney,jdbcType=REAL},
+      </if>
+      <if test="rerentCount != null" >
+        #{rerentCount,jdbcType=INTEGER},
+      </if>
+      <if test="offrentTime != null" >
+        #{offrentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offrentType != null" >
+        #{offrentType,jdbcType=VARCHAR},
+      </if>
+      <if test="actualCheckDuration != null" >
+        #{actualCheckDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedTime != null" >
+        #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ace.acemanager.pojo.StatisticsOwnerList" >
+    update statistics_owner_list
+    <set >
+      <if test="contractStatus != null" >
+        contract_status = #{contractStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="houseInfo != null" >
+        house_info = #{houseInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerName != null" >
+        owner_name = #{ownerName,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null" >
+        contact = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="trusteeshipDuration != null" >
+        trusteeship_duration = #{trusteeshipDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="contractCreateTime != null" >
+        contract_create_time = #{contractCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contractStartTime != null" >
+        contract_start_time = #{contractStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contractEndTime != null" >
+        contract_end_time = #{contractEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payType != null" >
+        pay_type = #{payType,jdbcType=VARCHAR},
+      </if>
+      <if test="monthRentMoney != null" >
+        month_rent_money = #{monthRentMoney,jdbcType=REAL},
+      </if>
+      <if test="cashMoney != null" >
+        cash_money = #{cashMoney,jdbcType=REAL},
+      </if>
+      <if test="rerentCount != null" >
+        rerent_count = #{rerentCount,jdbcType=INTEGER},
+      </if>
+      <if test="offrentTime != null" >
+        offrent_time = #{offrentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offrentType != null" >
+        offrent_type = #{offrentType,jdbcType=VARCHAR},
+      </if>
+      <if test="actualCheckDuration != null" >
+        actual_check_duration = #{actualCheckDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedTime != null" >
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ace.acemanager.pojo.StatisticsOwnerList" >
+    update statistics_owner_list
+    set contract_status = #{contractStatus,jdbcType=VARCHAR},
+      house_info = #{houseInfo,jdbcType=VARCHAR},
+      owner_name = #{ownerName,jdbcType=VARCHAR},
+      contact = #{contact,jdbcType=VARCHAR},
+      trusteeship_duration = #{trusteeshipDuration,jdbcType=VARCHAR},
+      contract_create_time = #{contractCreateTime,jdbcType=TIMESTAMP},
+      contract_start_time = #{contractStartTime,jdbcType=TIMESTAMP},
+      contract_end_time = #{contractEndTime,jdbcType=TIMESTAMP},
+      pay_type = #{payType,jdbcType=VARCHAR},
+      month_rent_money = #{monthRentMoney,jdbcType=REAL},
+      cash_money = #{cashMoney,jdbcType=REAL},
+      rerent_count = #{rerentCount,jdbcType=INTEGER},
+      offrent_time = #{offrentTime,jdbcType=TIMESTAMP},
+      offrent_type = #{offrentType,jdbcType=VARCHAR},
+      actual_check_duration = #{actualCheckDuration,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
